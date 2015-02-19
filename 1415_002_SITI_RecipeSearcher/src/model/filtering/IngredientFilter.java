@@ -1,9 +1,13 @@
 package model.filtering;
-import model.entity.Ingredient;
 
 public class IngredientFilter implements Filter
 {
 	private String ingredientName;
+	
+	public IngredientFilter(String ingredientName)
+	{
+		this.ingredientName = ingredientName;
+	}
 
 	public String getIngredientName()
 	{

@@ -11,6 +11,18 @@ public class Recipe
 	private String category;
 	private String rating;
 	
+	public Recipe(Integer recipeId, String name, String description, String timePrep, String timeCook, String timeTotal, String category, String rating)
+	{
+		this.recipeId = recipeId;
+		this.name =name;
+		this.description = description;
+		this.timePrep =timePrep;
+		this.timeCook = timeCook;
+		this.timeTotal = timeTotal;
+		this.category = category;
+		this.rating = rating;
+	}
+	
 	public Integer getRecipeId()
 	{
 		return recipeId;

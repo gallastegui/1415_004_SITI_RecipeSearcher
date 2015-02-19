@@ -1,5 +1,8 @@
 package model.connector;
 import java.sql.*;
+import java.util.*;
+
+import model.entity.*;
 import model.filtering.*;
 
 public class SqlConnection
@@ -51,12 +54,14 @@ public class SqlConnection
 		return true;
 	}
 	
-	public boolean executeSearch(String sql)
+	public ArrayList<Recipe> executeSearch(String sql)
 	{
 		Statement stmt = null;
+		ResultSet rs = null;
+		ArrayList<Recipe> recipes = new ArrayList<Recipe>();
 		
 		if(sql == null)
-			return false;
+			return null;
 		
 		if(connector == null)
 			connectDatabase();
@@ -64,14 +69,52 @@ public class SqlConnection
 		try
 		{
 			stmt = connector.createStatement();
-			stmt.executeUpdate(sql);
+			rs = stmt.executeQuery(sql);
+			while (rs.next())
+			{
+				recipes.add(new Recipe(rs.getInt("recipeId"), rs.getString("name"), rs.getString("description"), rs.getString("timePrep"), rs.getString("timeCook"), rs.getString("timeTotal"), rs.getString("category"), rs.getString("rating")));
+			}
+			rs.close();
 		    stmt.close();
-		    connector.commit();
-		    return true;
+		    return recipes;
 		} catch (SQLException e)
 		{
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			return false;
+			return null;
 		}
+	}
+	
+	public String buildBasicSearchQuery(ArrayList<IngredientFilter> incIngredients, ArrayList<IngredientFilter> remIngredients, String descriptionText)
+	{
+		String query = "SELECT * FROM RECIPE as r, INGREDIENT as i WHERE r.recipeId=i.recipeId";
+		int i;
+		
+		if(!descriptionText.isEmpty())
+			query = query + " AND (r.name LIKE '%"+descriptionText+"%')";
+		if(!incIngredients.isEmpty())
+		{
+			query = query + " AND (";
+			for(i=0;i<incIngredients.size();i++)
+			{
+				query = query + "i.name LIKE '%"+incIngredients.get(i).getIngredientName()+"%'";
+				if(i < incIngredients.size() -1)
+					query = query + " AND ";
+			}
+			query = query + ")";
+		}
+		if(!remIngredients.isEmpty())
+		{
+			query = query + " AND (";
+			for(i=0;i<remIngredients.size();i++)
+			{
+				query = query + "i.name NOT LIKE '%"+remIngredients.get(i).getIngredientName()+"%'";
+				if(i < remIngredients.size() -1)
+					query = query + " AND ";
+			}
+			query = query + ")";			
+		}
+		query = query + ";";
+		
+		return query;
 	}
 }

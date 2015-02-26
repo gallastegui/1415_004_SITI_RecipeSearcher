@@ -2,6 +2,8 @@ package view;
 import java.awt.*;
 
 import javax.swing.*;
+import javax.swing.table.*;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -11,7 +13,13 @@ public class SimpleSearchView extends JFrame
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	final JTable table , table2;
+	DefaultTableModel model, model2;
+	final String[] columnNames = {"Ingredient name",
+            "Total amount",
+            "Unit"
+            };
+	
 	public SimpleSearchView()
 	{
 		Color bk = new Color(210,225,240);
@@ -20,41 +28,19 @@ public class SimpleSearchView extends JFrame
 		JPanel wrapper = new JPanel(new FlowLayout(0, 0, FlowLayout.LEADING)), wrapper2 = new JPanel(new FlowLayout(FlowLayout.CENTER)), wrapper3 = new JPanel(new GridLayout(1,1)), wrapper4 = new JPanel();
 		JTextField jtfText1 = new JTextField(50);
 		JButton bttn = new JButton("Buscar");
-		String[] columnNames = {"First Name",
-                "Last Name",
-                "Sport",
-                "# of Years",
-                "Vegetarian"};
-		Object[][] data = {
-		{"Kathy", "Smith",
-		"Snowboarding", new Integer(5), new Boolean(false)},
-		{"John", "Doe",
-		"Rowing", new Integer(3), new Boolean(true)},
-		{"Sue", "Black",
-		"Knitting", new Integer(2), new Boolean(false)},
-		{"Jane", "White",
-		"Speed reading", new Integer(20), new Boolean(true)},
-		{"Joe", "Brown",
-		"Pool", new Integer(10), new Boolean(false)}
-		};
-		String[] columnNames2 = {"First Name",
-                "Last Name",
-                "Sport",
-                "# of Years",
-                "Vegetarian"};
-		Object[][] data2 = {
-		{"Kathy", "Smith",
-		"Snowboarding", new Integer(5), new Boolean(false)},
-		{"John", "Doe",
-		"Rowing", new Integer(3), new Boolean(true)},
-		{"Sue", "Black",
-		"Knitting", new Integer(2), new Boolean(false)},
-		{"Jane", "White",
-		"Speed reading", new Integer(20), new Boolean(true)},
-		{"Joe", "Brown",
-		"Pool", new Integer(10), new Boolean(false)}
-		};
-		final JTable table = new JTable(data, columnNames), table2 = new JTable(data2, columnNames2);
+		
+		/******************build table model*********************/
+		this.model = new DefaultTableModel();
+		this.model.addColumn("Ingredient name");
+		this.model.addColumn("Total amount");
+		this.model.addColumn("Unit");
+		table = new JTable(model);
+		this.model2 = new DefaultTableModel();
+		this.model2.addColumn("Ingredient name");
+		this.model2.addColumn("Total amount");
+		this.model2.addColumn("Unit");
+		table2 = new JTable(model2);
+		/****************************************/
 		table.setPreferredScrollableViewportSize(new Dimension(510, 70));
 		table.setFillsViewportHeight(true);
 		table2.setPreferredScrollableViewportSize(new Dimension(510, 70));
@@ -72,15 +58,34 @@ public class SimpleSearchView extends JFrame
 		panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.Y_AXIS));
 		
 		JButton btnNewButton = new JButton("+");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		btnNewButton.addActionListener(
+			new ActionListener()
+			{
+				public void actionPerformed(ActionEvent arg0)
+				{
+					DefaultTableModel model = (DefaultTableModel) table.getModel();
+					model.addRow(new Object[]{"", "", ""});
+				}
 			}
-		});
+		);
 		panel_3.add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("-");
-		panel_3.add(btnNewButton_1);
+		btnNewButton_1.addActionListener(
+				new ActionListener()
+				{
+					public void actionPerformed(ActionEvent arg0)
+					{
+						 DefaultTableModel model = (DefaultTableModel) table.getModel();
+						   int[] rows = table.getSelectedRows();
+						   for(int i=0;i<rows.length;i++){
+						     model.removeRow(rows[i]-i);
+						   }
+					}
+				}
+			);
 		
+		panel_3.add(btnNewButton_1);
 		JPanel panel_4 = new JPanel();
 		panel_4.add(scrollPane2);
 		wrapper4.add(panel_4);
@@ -90,9 +95,32 @@ public class SimpleSearchView extends JFrame
 		panel_5.setLayout(new BoxLayout(panel_5, BoxLayout.Y_AXIS));
 		
 		JButton btnNewButton_2 = new JButton("+");
+		btnNewButton_2.addActionListener(
+				new ActionListener()
+				{
+					public void actionPerformed(ActionEvent arg0)
+					{
+						DefaultTableModel model2 = (DefaultTableModel) table2.getModel();
+						model2.addRow(new Object[]{"", "", ""});
+					}
+				}
+			);
 		panel_5.add(btnNewButton_2);
 		
 		JButton btnNewButton_3 = new JButton("-");
+		btnNewButton_3.addActionListener(
+				new ActionListener()
+				{
+					public void actionPerformed(ActionEvent arg0)
+					{
+						 DefaultTableModel model2 = (DefaultTableModel) table2.getModel();
+						   int[] rows = table2.getSelectedRows();
+						   for(int i=0;i<rows.length;i++){
+						     model2.removeRow(rows[i]-i);
+						   }
+					}
+				}
+			);
 		panel_5.add(btnNewButton_3);
 		wrapper2.add(jlb1);
 		first.add(wrapper2);

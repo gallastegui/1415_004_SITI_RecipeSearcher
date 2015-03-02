@@ -1,5 +1,13 @@
 package controller;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.table.DefaultTableModel;
+
+import view.SimpleSearchView;
+
 import java.util.*;
 
 import model.connector.SqlConnection;
@@ -7,11 +15,11 @@ import model.entity.Recipe;
 import model.filtering.*;
 import model.searcher.*;
 
-public class BasicSearchController implements IController
+public class BasicSearchController implements IController,ActionListener
 {
 	private String sql;
 	private SqlConnection sqlConn;
-	private final String[] columnNames = new String[] {"name", "amount", "unit"};
+	private SimpleSearchView view;
 	private ArrayList<IngredientFilter> incIngredients;
 	private ArrayList<IngredientFilter> remIngredients;
 	private String descriptionText;
@@ -79,5 +87,100 @@ public class BasicSearchController implements IController
 		sql = sqlConn.buildBasicSearchQuery(this.incIngredients, this.remIngredients,this.descriptionText);
 		
 		return sqlConn.executeSearch(sql);
+	}
+	
+	public SimpleSearchView getView()
+	{
+		return view;
+	}
+
+	public void setView(SimpleSearchView view)
+	{
+		this.view = view;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e)
+	{
+		 String actionCommand = ((JButton) e.getSource()).getActionCommand();
+		 if(actionCommand.equals("btnNewButton"))
+		 {
+			 this.view.getModel().addRow(new Object[]{"", "", ""});
+		 }
+		 else if(actionCommand.equals("btnNewButton_1"))
+		 {
+			 int[] rows = this.view.getTable().getSelectedRows();
+			 for(int i=0;i<rows.length;i++)
+			 {
+				 this.view.getModel().removeRow(rows[i]-i);
+			 }
+		 }
+		 else if(actionCommand.equals("btnNewButton_2"))
+		 {
+			 this.view.getModel2().addRow(new Object[]{"", "", ""});
+		 }
+		 else if(actionCommand.equals("btnNewButton_3"))
+		 {
+			 int[] rows = this.view.getTable2().getSelectedRows();
+			 for(int i=0;i<rows.length;i++)
+			 {
+				 this.view.getModel2().removeRow(rows[i]-i);
+			 }
+		 }
+		 else if(actionCommand.equals("bttn"))
+		 {
+			getDatIngredients();
+			System.out.println(sqlConn.buildBasicSearchQuery(incIngredients, remIngredients, descriptionText));
+		 }	 
+	}
+
+	private void getDatIngredients()
+	{
+		int numRows, i;
+		String name = null, amount = null, unit = null;
+		
+		/*obtain the data of the descriptiontext*/
+		this.descriptionText = this.view.getJtfText1().getText();
+		/*obtain the data of the first table*/
+		numRows = this.view.getModel().getRowCount();
+		for(i=0;i<numRows;i++)
+		{
+			try
+			{
+				name = (String) ((Vector)this.view.getModel().getDataVector().elementAt(i)).elementAt(0);
+			}
+			catch(Exception e)
+			{
+				name = "";
+			}
+			
+			try
+			{
+				amount = (String) ((Vector)this.view.getModel().getDataVector().elementAt(i)).elementAt(1);
+			}
+			catch(Exception e)
+			{
+				amount = "";
+			}
+			
+			try
+			{
+				unit = (String) ((Vector)this.view.getModel().getDataVector().elementAt(i)).elementAt(2);
+			}
+			catch(Exception e)
+			{
+				unit = "";
+			}
+				incIngredients.add(new IngredientFilter(name, amount, unit));
+		}
+		/*obtain the data of the second table*/
+		numRows = this.view.getModel2().getRowCount();
+		for(i=0;i<numRows;i++)
+		{
+			name = (String) ((Vector)this.view.getModel2().getDataVector().elementAt(i)).elementAt(0);
+			amount = (String) ((Vector)this.view.getModel2().getDataVector().elementAt(i)).elementAt(1);
+			unit = (String) ((Vector)this.view.getModel2().getDataVector().elementAt(i)).elementAt(2);
+			remIngredients.add(new IngredientFilter(name, amount, unit));
+		}
 	}
 }

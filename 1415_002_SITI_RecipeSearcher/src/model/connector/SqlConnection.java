@@ -93,26 +93,70 @@ public class SqlConnection
 			query = query + " AND (r.name LIKE '%"+descriptionText+"%')";
 		if(!incIngredients.isEmpty())
 		{
-			query = query + " AND (";
 			for(i=0;i<incIngredients.size();i++)
 			{
-				query = query + "i.name LIKE '%"+incIngredients.get(i).getIngredientName()+"%'";
-				if(i < incIngredients.size() -1)
-					query = query + " AND ";
+				query = query + " AND (";
+				if(!incIngredients.get(i).getIngredientName().isEmpty())
+				{
+					query = query + "i.name LIKE '%"+incIngredients.get(i).getIngredientName()+"%' ";
+					if(!incIngredients.get(i).getIngredientAmount().isEmpty())
+					{
+						query = query + "AND i.amount LIKE '%"+incIngredients.get(i).getIngredientAmount()+"%' ";
+					}					
+					if(!incIngredients.get(i).getIngredientUnit().isEmpty())
+						query = query + "AND i.unit LIKE '%"+incIngredients.get(i).getIngredientUnit()+"%' ";			
+				}
+				else
+				{
+					if(!incIngredients.get(i).getIngredientAmount().isEmpty())
+					{
+						query = query + "i.amount LIKE '%"+incIngredients.get(i).getIngredientAmount()+"%' ";
+						if(!incIngredients.get(i).getIngredientUnit().isEmpty())
+							query = query + "AND i.unit LIKE '%"+incIngredients.get(i).getIngredientUnit()+"%' ";
+					}
+					else
+					{
+						if(!incIngredients.get(i).getIngredientUnit().isEmpty())
+							query = query + "i.unit LIKE '%"+incIngredients.get(i).getIngredientUnit()+"%' ";
+					}
+				}
+				
+				query = query + ")";
 			}
-			query = query + ")";
 		}
 		if(!remIngredients.isEmpty())
 		{
-			query = query + " AND (";
 			for(i=0;i<remIngredients.size();i++)
 			{
-				query = query + "i.name NOT LIKE '%"+remIngredients.get(i).getIngredientName()+"%'";
-				if(i < remIngredients.size() -1)
-					query = query + " AND ";
-			}
-			query = query + ")";			
+				query = query + " AND (";
+				if(!remIngredients.get(i).getIngredientName().isEmpty())
+				{
+					query = query + "i.name LIKE '%"+remIngredients.get(i).getIngredientName()+"%' ";
+					if(!remIngredients.get(i).getIngredientAmount().isEmpty())
+					{
+						query = query + "AND i.amount LIKE '%"+remIngredients.get(i).getIngredientAmount()+"%' ";
+					}					
+					if(!remIngredients.get(i).getIngredientUnit().isEmpty())
+						query = query + "AND i.unit LIKE '%"+remIngredients.get(i).getIngredientUnit()+"%' ";			
+				}
+				else
+				{
+					if(!remIngredients.get(i).getIngredientAmount().isEmpty())
+					{
+						query = query + "i.amount LIKE '%"+remIngredients.get(i).getIngredientAmount()+"%' ";
+						if(!remIngredients.get(i).getIngredientUnit().isEmpty())
+							query = query + "AND i.unit LIKE '%"+remIngredients.get(i).getIngredientUnit()+"%' ";
+					}
+					else
+					{
+						if(!remIngredients.get(i).getIngredientUnit().isEmpty())
+							query = query + "i.unit LIKE '%"+remIngredients.get(i).getIngredientUnit()+"%' ";
+					}
+				}
+				query = query + ")";
+			}			
 		}
+		
 		query = query + ";";
 		
 		return query;

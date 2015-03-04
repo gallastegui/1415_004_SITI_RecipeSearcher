@@ -8,7 +8,12 @@ import model.filtering.*;
 public class SqlConnection
 {
 	private Connection connector = null;
-	private static final String dbName = "";
+	private final String dbName;
+	
+	public SqlConnection(String dbName)
+	{
+		this.dbName=dbName;
+	}
 	
 	public Connection getConnector()
 	{
@@ -72,7 +77,7 @@ public class SqlConnection
 			rs = stmt.executeQuery(sql);
 			while (rs.next())
 			{
-				recipes.add(new Recipe(rs.getInt("recipeId"), rs.getString("name"), rs.getString("description"), rs.getString("timePrep"), rs.getString("timeCook"), rs.getString("timeTotal"), rs.getString("category"), rs.getString("rating")));
+				recipes.add(new Recipe(rs.getInt("id"), rs.getString("recipeName"), rs.getString("recipeDescription"), rs.getString("recipeTimePrep"), rs.getString("recipeTimeCook"), rs.getString("recipeTimeTotal"), rs.getString("recipeRating"), rs.getString("recipeCategory")));
 			}
 			rs.close();
 		    stmt.close();
@@ -86,7 +91,7 @@ public class SqlConnection
 	
 	public String buildBasicSearchQuery(ArrayList<IngredientFilter> incIngredients, ArrayList<IngredientFilter> remIngredients, String descriptionText)
 	{
-		String query = "SELECT * FROM RECIPE as r, INGREDIENT as i WHERE r.recipeId=i.recipeId";
+		String query = "SELECT r.recipeId as id, r.name as recipeName,r.description as recipeDescription, r.timePrep as recipeTimePrep, r.timeCook as recipeTimeCook, r.timeTotal as recipeTimeTotal, r.rating as recipeRating, r.category as recipeCategory FROM RECIPE as r, INGREDIENT as i WHERE r.recipeId=i.recipeId";
 		int i;
 		
 		if(!descriptionText.isEmpty())

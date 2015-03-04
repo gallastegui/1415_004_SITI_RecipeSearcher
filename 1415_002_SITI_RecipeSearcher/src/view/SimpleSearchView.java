@@ -1,15 +1,11 @@
 package view;
 import java.awt.*;
-
 import javax.swing.*;
 import javax.swing.table.*;
-
 import controller.BasicSearchController;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
-public class SimpleSearchView extends JFrame
+public class SimpleSearchView extends JPanel
 {
 	/**
 	 * 
@@ -19,18 +15,12 @@ public class SimpleSearchView extends JFrame
 	private JTable table , table2;
 	JTextField jtfText1;
 	private DefaultTableModel model, model2;
-
-	final String[] columnNames = {"Ingredient name",
-            "Total amount",
-            "Unit"
-            };
 	
 	public SimpleSearchView()
 	{
 		this.controller = new BasicSearchController();
 		this.controller.setView(this);
 		this.createComponents();
-		setVisible(true);
 	}
 	
 	public DefaultTableModel getModel()
@@ -167,10 +157,10 @@ public class SimpleSearchView extends JFrame
 		panel_7.add(lblIngredientesQueQuiero);
 		panel_6.add(panel_8, BorderLayout.CENTER);
 		panel_8.add(lblIngredientesQueNo);
-		this.getContentPane().setLayout(new GridLayout(3, 1));
-		this.getContentPane().add(first);
-		this.getContentPane().add(second);
-		this.getContentPane().add(third);
+		this.setLayout(new GridLayout(3, 1));
+		this.add(first);
+		this.add(second);
+		this.add(third);
 		
 		/*Set background colors*/
 		first.setBackground(bk);
@@ -183,12 +173,6 @@ public class SimpleSearchView extends JFrame
 		panel_4.setBackground(bk);
 		panel.setBackground(bk);
 		panel_2.setBackground(bk);
-		this.setExtendedState(MAXIMIZED_BOTH);
-	}
-
-	public static void main(String args[])
-	{
-		new SimpleSearchView();
 	}
 	
 	/*public SimpleSearchView()

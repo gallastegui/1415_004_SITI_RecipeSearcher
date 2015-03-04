@@ -26,7 +26,7 @@ public class BasicSearchController implements IController,ActionListener
 	
 	public BasicSearchController()
 	{
-		sqlConn = new SqlConnection();
+		sqlConn = new SqlConnection("C:\\Users\\g.gallastegui\\db\\allrecipesv1.db");
 		this.incIngredients = new ArrayList<IngredientFilter>();
 		this.remIngredients = new ArrayList<IngredientFilter>();
 	}
@@ -131,7 +131,8 @@ public class BasicSearchController implements IController,ActionListener
 		 {
 			getDatIngredients();
 			System.out.println(sqlConn.buildBasicSearchQuery(incIngredients, remIngredients, descriptionText));
-		 }	 
+			sqlConn.executeSearch(sqlConn.buildBasicSearchQuery(incIngredients, remIngredients, descriptionText));
+		 }
 	}
 
 	private void getDatIngredients()

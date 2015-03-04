@@ -16,11 +16,20 @@ public class SimpleSearchView extends JPanel
 	JTextField jtfText1;
 	private DefaultTableModel model, model2;
 	
-	public SimpleSearchView()
+	public SimpleSearchView(BasicSearchController controller)
 	{
-		this.controller = new BasicSearchController();
-		this.controller.setView(this);
+		this.controller=controller;
 		this.createComponents();
+	}
+	
+	public BasicSearchController getController()
+	{
+		return controller;
+	}
+
+	public void setController(BasicSearchController controller)
+	{
+		this.controller = controller;
 	}
 	
 	public DefaultTableModel getModel()

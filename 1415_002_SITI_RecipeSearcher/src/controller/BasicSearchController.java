@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
 
+import test.SearcherTest;
 import view.SimpleSearchView;
 
 import java.util.*;
@@ -23,12 +24,19 @@ public class BasicSearchController implements IController,ActionListener
 	private ArrayList<IngredientFilter> incIngredients;
 	private ArrayList<IngredientFilter> remIngredients;
 	private String descriptionText;
-	
+	private SearcherTest jframe;
+	private ArrayList<Recipe> recipeResults;
+
 	public BasicSearchController()
 	{
-		sqlConn = new SqlConnection("C:\\Users\\g.gallastegui\\db\\allrecipesv1.db");
+		sqlConn = new SqlConnection("C:\\Users\\eps\\allrecipesv1.db");
 		this.incIngredients = new ArrayList<IngredientFilter>();
 		this.remIngredients = new ArrayList<IngredientFilter>();
+	}
+	
+	public void setJframe(SearcherTest jframe)
+	{
+		this.jframe = jframe;
 	}
 	
 	public void addIngredientIncList()
@@ -98,6 +106,11 @@ public class BasicSearchController implements IController,ActionListener
 	{
 		this.view = view;
 	}
+	
+	public ArrayList<Recipe> getRecipeResults()
+	{
+		return recipeResults;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e)
@@ -131,7 +144,8 @@ public class BasicSearchController implements IController,ActionListener
 		 {
 			getDatIngredients();
 			System.out.println(sqlConn.buildBasicSearchQuery(incIngredients, remIngredients, descriptionText));
-			sqlConn.executeSearch(sqlConn.buildBasicSearchQuery(incIngredients, remIngredients, descriptionText));
+			recipeResults = sqlConn.executeSearch(sqlConn.buildBasicSearchQuery(incIngredients, remIngredients, descriptionText));
+			this.jframe.setFlag(1);
 		 }
 	}
 

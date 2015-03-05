@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.table.DefaultTableModel;
 
 import test.SearcherTest;
 import view.SimpleSearchView;
@@ -14,7 +13,6 @@ import java.util.*;
 import model.connector.SqlConnection;
 import model.entity.Recipe;
 import model.filtering.*;
-import model.searcher.*;
 
 public class BasicSearchController implements IController,ActionListener
 {

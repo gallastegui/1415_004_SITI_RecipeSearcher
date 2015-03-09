@@ -2,6 +2,7 @@ package test;
 
 import javax.swing.JFrame;
 
+import controller.AdvancedSearchController;
 import controller.BasicSearchController;
 import controller.DefaultController;
 import controller.ResultsController;
@@ -21,6 +22,7 @@ public class SearcherTest
 	private DefaultView dfview;
 	private DefaultController dfcontroller;
 	private AdvancedSearchView asview;
+	private AdvancedSearchController ascontroller;
 	
 
 	public SearcherTest()
@@ -55,7 +57,11 @@ public class SearcherTest
 			this.ssview.updateUI();
 			this.dfview.updateUI();
 		}
-		if(this.flag == 4)
+		else if(this.flag == 3)
+		{
+			
+		}
+		else if(this.flag == 4)
 		{
 			this.rscontroller.setRecipeResults(this.sscontroller.getRecipeResults());
 			this.window.remove(ssview);
@@ -64,6 +70,15 @@ public class SearcherTest
 			this.rsview.updateUI();
 			this.ssview.updateUI();
 		}
+		else if(this.flag == 5)
+		{
+			this.window.remove(asview);
+			this.dfview.setVisible(true);
+			this.window.add(dfview);
+			this.dfview.updateUI();
+			this.asview.updateUI();
+		}
+		
 	}
 	
 	public static void main(String args[])
@@ -79,10 +94,12 @@ public class SearcherTest
 		program.dfcontroller = new DefaultController();
 		program.dfview = new DefaultView(program.dfcontroller);
 		
-		program.asview = new AdvancedSearchView();
+		program.ascontroller = new AdvancedSearchController();
+		program.asview = new AdvancedSearchView(program.ascontroller);
 		
 		program.sscontroller.setJframe(program);
 		program.dfcontroller.setJframe(program);
+		program.ascontroller.setJframe(program);
 		program.sscontroller.setView(program.ssview);
 		program.rscontroller.setView(program.rsview);
 		

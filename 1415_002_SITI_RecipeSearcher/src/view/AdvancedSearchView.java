@@ -18,6 +18,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JButton;
 
+import controller.AdvancedSearchController;
+
 public class AdvancedSearchView extends JPanel
 {
 	private static final long serialVersionUID = 4L;
@@ -25,15 +27,22 @@ public class AdvancedSearchView extends JPanel
 	private JTable table;
 	private JTable table2;
 	private DefaultTableModel model, model2;
-	private DefaultComboBoxModel model3;
-	final String labels[] = { "menos de 30 mins", "entre 30-60 mins", "más de 60 mins"};
+	private DefaultComboBoxModel model3, model4, model5, model6, model7;
+	final String labels[] = { "", "less than 30 mins", "between 30-60 mins", "more than 60 mins"};
+	final String labels2[] = { "", "Suitable for diabetics", "Suitable for celiacs", "Suitable for vegetarians", "Suitable for vegans"};
+	final String labels3[] = { "", "1 star", "2 stars", "3 stars", "4 stars", "5 stars"};
+	final String labels4[] = { "", "Easy", "Medium", "Hard"};
+	final String labels5[] = { "", "Appetizer", "Breakfast & Brunch", "Chicken", "Main Dish"};
+	private AdvancedSearchController controller;
 	
-	public AdvancedSearchView()
+	public AdvancedSearchView(AdvancedSearchController controller)
 	{
 		setBackground(new Color(210, 225, 240));
 		this.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.setPreferredSize( Toolkit.getDefaultToolkit().getScreenSize());
 		this.setLayout(null);
+		
+		this.controller = controller;
 		
 		JLabel lblNewLabel = new JLabel("Buscador avanzado");
 		lblNewLabel.setFont(new Font("Arial", Font.BOLD, 30));
@@ -98,19 +107,23 @@ public class AdvancedSearchView extends JPanel
 		comboBox2.setBounds(61, 707, 149, 20);
 		add(comboBox2);
 		
-		JComboBox comboBox = new JComboBox();
+		model4 = new DefaultComboBoxModel(labels2);
+		JComboBox comboBox = new JComboBox(model4);
 		comboBox.setBounds(299, 707, 140, 20);
 		add(comboBox);
 		
-		JComboBox comboBox_1 = new JComboBox();
+		model5 = new DefaultComboBoxModel(labels3);
+		JComboBox comboBox_1 = new JComboBox(model5);
 		comboBox_1.setBounds(554, 707, 140, 20);
 		add(comboBox_1);
 		
-		JComboBox comboBox_2 = new JComboBox();
+		model6 = new DefaultComboBoxModel(labels4);
+		JComboBox comboBox_2 = new JComboBox(model6);
 		comboBox_2.setBounds(793, 707, 140, 20);
 		add(comboBox_2);
 		
-		JComboBox comboBox_3 = new JComboBox();
+		model7 = new DefaultComboBoxModel(labels5);
+		JComboBox comboBox_3 = new JComboBox(model7);
 		comboBox_3.setBounds(1033, 707, 140, 20);
 		add(comboBox_3);
 		
@@ -118,12 +131,16 @@ public class AdvancedSearchView extends JPanel
 		btnSearch.setForeground(Color.WHITE);
 		btnSearch.setBackground(new Color(255, 102, 0));
 		btnSearch.setBounds(581, 882, 94, 34);
+		btnSearch.setActionCommand("Search");
+		btnSearch.addActionListener(this.controller);
 		add(btnSearch);
 		
 		JButton btnBack = new JButton("Back");
 		btnBack.setForeground(Color.WHITE);
 		btnBack.setBackground(new Color(255, 102, 0));
 		btnBack.setBounds(61, 882, 94, 34);
+		btnBack.setActionCommand("back");
+		btnBack.addActionListener(this.controller);
 		add(btnBack);
 	}
 }

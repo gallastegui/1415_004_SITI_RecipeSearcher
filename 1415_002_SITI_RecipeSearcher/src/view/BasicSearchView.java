@@ -19,23 +19,23 @@ import javax.swing.JTable;
 import javax.swing.JButton;
 
 import controller.AdvancedSearchController;
+import controller.BasicSearchController;
 
-public class AdvancedSearchView extends JPanel
+public class BasicSearchView extends JPanel
 {
 	private static final long serialVersionUID = 4L;
 	private JTextField textField;
-	private JTable table;
-	private JTable table2;
+	private JTable table, table2;
 	private DefaultTableModel model, model2;
-	private DefaultComboBoxModel model3, model4, model5, model6, model7;
+
 	final String labels[] = { "", "less than 30 mins", "between 30-60 mins", "more than 60 mins"};
 	final String labels2[] = { "", "Suitable for diabetics", "Suitable for celiacs", "Suitable for vegetarians", "Suitable for vegans"};
 	final String labels3[] = { "", "1 star", "2 stars", "3 stars", "4 stars", "5 stars"};
 	final String labels4[] = { "", "Easy", "Medium", "Hard"};
 	final String labels5[] = { "", "Appetizer", "Breakfast & Brunch", "Chicken", "Main Dish"};
-	private AdvancedSearchController controller;
+	private BasicSearchController controller;
 	
-	public AdvancedSearchView(AdvancedSearchController controller)
+	public BasicSearchView(BasicSearchController controller)
 	{
 		setBackground(new Color(210, 225, 240));
 		this.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -44,7 +44,7 @@ public class AdvancedSearchView extends JPanel
 		
 		this.controller = controller;
 		
-		JLabel lblNewLabel = new JLabel("Advanced searcher");
+		JLabel lblNewLabel = new JLabel("Basic searcher");
 		lblNewLabel.setFont(new Font("Arial", Font.BOLD, 30));
 		lblNewLabel.setBounds(504, 70, 283, 50);
 		lblNewLabel.setForeground(new Color(77, 34, 4));
@@ -79,6 +79,8 @@ public class AdvancedSearchView extends JPanel
 		btnNewButton.setBackground(new Color(255, 102, 0));
 		btnNewButton.setForeground(new Color(255, 255, 255));
 		btnNewButton.setBounds(519, 304, 41, 34);
+		btnNewButton.setActionCommand("btnNewButton");
+		btnNewButton.addActionListener(this.controller);
 		add(btnNewButton);
 		
 		JLabel lblNewLabel_2 = new JLabel("Add ingredient that appears on the plate");
@@ -90,6 +92,8 @@ public class AdvancedSearchView extends JPanel
 		button.setForeground(Color.WHITE);
 		button.setBackground(new Color(255, 102, 0));
 		button.setBounds(1145, 304, 41, 34);
+		button.setActionCommand("button");
+		button.addActionListener(this.controller);
 		add(button);
 		
 		JLabel lblAddIngredientThat = new JLabel("Add ingredient that does not appear on the plate");
@@ -101,31 +105,6 @@ public class AdvancedSearchView extends JPanel
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.setBounds(120, 304, 400, 200);
 		add(scrollPane);
-		
-		model3 = new DefaultComboBoxModel(labels);
-		JComboBox comboBox2 = new JComboBox(model3);
-		comboBox2.setBounds(61, 707, 149, 20);
-		add(comboBox2);
-		
-		model4 = new DefaultComboBoxModel(labels2);
-		JComboBox comboBox = new JComboBox(model4);
-		comboBox.setBounds(299, 707, 140, 20);
-		add(comboBox);
-		
-		model5 = new DefaultComboBoxModel(labels3);
-		JComboBox comboBox_1 = new JComboBox(model5);
-		comboBox_1.setBounds(554, 707, 140, 20);
-		add(comboBox_1);
-		
-		model6 = new DefaultComboBoxModel(labels4);
-		JComboBox comboBox_2 = new JComboBox(model6);
-		comboBox_2.setBounds(793, 707, 140, 20);
-		add(comboBox_2);
-		
-		model7 = new DefaultComboBoxModel(labels5);
-		JComboBox comboBox_3 = new JComboBox(model7);
-		comboBox_3.setBounds(1033, 707, 140, 20);
-		add(comboBox_3);
 		
 		JButton btnSearch = new JButton("Search");
 		btnSearch.setForeground(Color.WHITE);
@@ -143,41 +122,70 @@ public class AdvancedSearchView extends JPanel
 		btnBack.addActionListener(this.controller);
 		add(btnBack);
 		
-		JLabel lblTime = new JLabel("Time");
-		lblTime.setFont(new Font("Arial", Font.BOLD, 14));
-		lblTime.setBounds(61, 682, 33, 14);
-		add(lblTime);
-		
-		JLabel lblAvailability = new JLabel("availability");
-		lblAvailability.setFont(new Font("Arial", Font.BOLD, 14));
-		lblAvailability.setBounds(299, 683, 84, 14);
-		add(lblAvailability);
-		
-		JLabel lblStars = new JLabel("Stars");
-		lblStars.setFont(new Font("Arial", Font.BOLD, 14));
-		lblStars.setBounds(553, 683, 41, 14);
-		add(lblStars);
-		
-		JLabel lblDificulty = new JLabel("Dificulty");
-		lblDificulty.setFont(new Font("Arial", Font.BOLD, 14));
-		lblDificulty.setBounds(793, 682, 63, 14);
-		add(lblDificulty);
-		
-		JLabel lblCategory = new JLabel("Category");
-		lblCategory.setFont(new Font("Arial", Font.BOLD, 14));
-		lblCategory.setBounds(1033, 682, 63, 14);
-		add(lblCategory);
-		
 		JButton button_1 = new JButton("-");
 		button_1.setForeground(Color.WHITE);
 		button_1.setBackground(new Color(255, 102, 0));
 		button_1.setBounds(519, 334, 41, 34);
+		button_1.setActionCommand("button_1");
+		button_1.addActionListener(this.controller);
 		add(button_1);
 		
 		JButton button_2 = new JButton("-");
 		button_2.setForeground(Color.WHITE);
 		button_2.setBackground(new Color(255, 102, 0));
 		button_2.setBounds(1145, 334, 41, 34);
+		button_2.setActionCommand("button_2");
+		button_2.addActionListener(this.controller);
 		add(button_2);
+	}
+	
+	public JTextField getTextField()
+	{
+		return textField;
+	}
+
+	public void setTextField(JTextField textField)
+	{
+		this.textField = textField;
+	}
+	
+	public DefaultTableModel getModel()
+	{
+		return model;
+	}
+
+	public void setModel(DefaultTableModel model)
+	{
+		this.model = model;
+	}
+
+	public DefaultTableModel getModel2()
+	{
+		return model2;
+	}
+
+	public void setModel2(DefaultTableModel model2)
+	{
+		this.model2 = model2;
+	}
+	
+	public JTable getTable()
+	{
+		return table;
+	}
+
+	public void setTable(JTable table)
+	{
+		this.table = table;
+	}
+
+	public JTable getTable2()
+	{
+		return table2;
+	}
+
+	public void setTable2(JTable table2)
+	{
+		this.table2 = table2;
 	}
 }

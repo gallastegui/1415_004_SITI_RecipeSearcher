@@ -29,7 +29,7 @@ public class AdvancedSearchController implements IController, ActionListener
 		String actionCommand = ((JButton) e.getSource()).getActionCommand();
 		if(actionCommand.equals("back"))
 		{
-			this.jframe.setFlag(5);
+			this.jframe.setFlag(6);
 		}
 		else if(actionCommand.equals("search"))
 		{

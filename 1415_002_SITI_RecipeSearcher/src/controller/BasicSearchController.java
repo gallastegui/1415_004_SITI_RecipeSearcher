@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 
 import test.SearcherTest;
+import view.BasicSearchView;
 import view.SimpleSearchView;
 
 import java.util.*;
@@ -18,7 +19,7 @@ public class BasicSearchController implements IController,ActionListener
 {
 	private String sql;
 	private SqlConnection sqlConn;
-	private SimpleSearchView view;
+	private BasicSearchView view;
 	private ArrayList<IngredientFilter> incIngredients;
 	private ArrayList<IngredientFilter> remIngredients;
 	private String descriptionText;
@@ -95,12 +96,12 @@ public class BasicSearchController implements IController,ActionListener
 		return sqlConn.executeSearch(sql);
 	}
 	
-	public SimpleSearchView getView()
+	public BasicSearchView getView()
 	{
 		return view;
 	}
 
-	public void setView(SimpleSearchView view)
+	public void setView(BasicSearchView view)
 	{
 		this.view = view;
 	}
@@ -118,7 +119,7 @@ public class BasicSearchController implements IController,ActionListener
 		 {
 			 this.view.getModel().addRow(new Object[]{"", "", ""});
 		 }
-		 else if(actionCommand.equals("btnNewButton_1"))
+		 else if(actionCommand.equals("button_1"))
 		 {
 			 int[] rows = this.view.getTable().getSelectedRows();
 			 for(int i=0;i<rows.length;i++)
@@ -126,17 +127,21 @@ public class BasicSearchController implements IController,ActionListener
 				 this.view.getModel().removeRow(rows[i]-i);
 			 }
 		 }
-		 else if(actionCommand.equals("btnNewButton_2"))
+		 else if(actionCommand.equals("button"))
 		 {
 			 this.view.getModel2().addRow(new Object[]{"", "", ""});
 		 }
-		 else if(actionCommand.equals("btnNewButton_3"))
+		 else if(actionCommand.equals("button_2"))
 		 {
 			 int[] rows = this.view.getTable2().getSelectedRows();
 			 for(int i=0;i<rows.length;i++)
 			 {
 				 this.view.getModel2().removeRow(rows[i]-i);
 			 }
+		 }
+		 else if(actionCommand.equals("back"))
+		 {
+			 this.jframe.setFlag(4);
 		 }
 		 else if(actionCommand.equals("bttn"))
 		 {
@@ -153,7 +158,7 @@ public class BasicSearchController implements IController,ActionListener
 		String name = null, amount = null, unit = null;
 		
 		/*obtain the data of the descriptiontext*/
-		this.descriptionText = this.view.getJtfText1().getText();
+		this.descriptionText = this.view.getTextField().getText();
 		/*obtain the data of the first table*/
 		numRows = this.view.getModel().getRowCount();
 		for(i=0;i<numRows;i++)

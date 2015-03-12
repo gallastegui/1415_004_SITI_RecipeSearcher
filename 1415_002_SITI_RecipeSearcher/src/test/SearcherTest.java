@@ -5,10 +5,12 @@ import javax.swing.JFrame;
 import controller.AdvancedSearchController;
 import controller.BasicSearchController;
 import controller.DefaultController;
+import controller.PredefinedSearchController;
 import controller.ResultsController;
 import view.AdvancedSearchView;
 import view.BasicSearchView;
 import view.DefaultView;
+import view.PredefinedSearchView;
 import view.ResultsView;
 import view.SimpleSearchView;
 
@@ -24,6 +26,8 @@ public class SearcherTest
 	private DefaultController dfcontroller;
 	private AdvancedSearchView asview;
 	private AdvancedSearchController ascontroller;
+	private PredefinedSearchView psview;
+	private PredefinedSearchController pscontroller;
 	
 
 	public SearcherTest()
@@ -65,7 +69,12 @@ public class SearcherTest
 		/*default to predefined search*/
 		else if(this.flag == 3)
 		{
-			
+			this.window.remove(dfview);
+			this.dfview.setVisible(false);
+			this.psview.setVisible(true);
+			this.window.add(psview);
+			this.psview.updateUI();
+			this.dfview.updateUI();
 		}
 		/*basic search-back*/
 		else if(this.flag == 4)
@@ -100,7 +109,12 @@ public class SearcherTest
 		/*predefined search-back*/
 		else if(this.flag == 8)
 		{
-			
+			this.window.remove(psview);
+			this.psview.setVisible(false);
+			this.dfview.setVisible(true);
+			this.window.add(dfview);
+			this.dfview.updateUI();
+			this.psview.updateUI();
 		}
 		/*predefined search-search*/
 		else if(this.flag == 9)
@@ -126,11 +140,16 @@ public class SearcherTest
 		program.ascontroller = new AdvancedSearchController();
 		program.asview = new AdvancedSearchView(program.ascontroller);
 		
+		program.pscontroller = new PredefinedSearchController();
+		program.psview = new PredefinedSearchView(program.pscontroller);
+		
 		program.bscontroller.setJframe(program);
 		program.dfcontroller.setJframe(program);
 		program.ascontroller.setJframe(program);
+		program.pscontroller.setJframe(program);
 		program.bscontroller.setView(program.bsview);
 		program.rscontroller.setView(program.rsview);
+		program.ascontroller.setView(program.asview);
 		
 		program.bsview.setVisible(true);
 		program.rsview.setVisible(true);

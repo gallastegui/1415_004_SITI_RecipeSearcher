@@ -20,8 +20,7 @@ public class BasicSearchController implements IController,ActionListener
 	private String sql;
 	private SqlConnection sqlConn;
 	private BasicSearchView view;
-	private ArrayList<IngredientFilter> incIngredients;
-	private ArrayList<IngredientFilter> remIngredients;
+	String comboboxText;
 	private String descriptionText;
 	private SearcherTest jframe;
 	private ArrayList<Recipe> recipeResults;
@@ -29,8 +28,6 @@ public class BasicSearchController implements IController,ActionListener
 	public BasicSearchController()
 	{
 		sqlConn = new SqlConnection("C:\\Users\\eps\\allrecipesv1.db");
-		this.incIngredients = new ArrayList<IngredientFilter>();
-		this.remIngredients = new ArrayList<IngredientFilter>();
 	}
 	
 	public void setJframe(SearcherTest jframe)
@@ -38,60 +35,14 @@ public class BasicSearchController implements IController,ActionListener
 		this.jframe = jframe;
 	}
 	
-	public void addIngredientIncList()
-	{
-		IngredientFilter ingFlt = new IngredientFilter(" "," "," ");
-		incIngredients.add(ingFlt);	
-	}
-	
-	public void addIngredientRemList()
-	{
-		IngredientFilter ingFlt = new IngredientFilter(" "," "," ");
-		remIngredients.add(ingFlt);
-	}
-	
 	public void addDescriptionText(String descriptionText)
 	{
 		this.descriptionText = descriptionText;
 	}
 	
-	public void setValueIncList(Object aValue, int rowIndex, int columnIndex)
-	{
-		IngredientFilter ingFlt = incIngredients.get(rowIndex);
-		if(0 == columnIndex)
-		{
-			ingFlt.setIngredientName((String) aValue);
-		}
-		else if(1 == columnIndex)
-		{
-			ingFlt.setIngredientAmount((String) aValue);
-		}
-		else if(2 == columnIndex)
-		{
-			ingFlt.setIngredientUnit((String) aValue);
-		}
-	}
-	
-	public void setValueRemList(Object aValue, int rowIndex, int columnIndex)
-	{
-		IngredientFilter ingFlt = remIngredients.get(rowIndex);
-		if(0 == columnIndex)
-		{
-			ingFlt.setIngredientName((String) aValue);
-		}
-		else if(1 == columnIndex)
-		{
-			ingFlt.setIngredientAmount((String) aValue);
-		}
-		else if(2 == columnIndex)
-		{
-			ingFlt.setIngredientUnit((String) aValue);
-		}
-	}
-	
 	public ArrayList<Recipe> applyFilteredSearch()
 	{
-		sql = sqlConn.buildBasicSearchQuery(this.incIngredients, this.remIngredients,this.descriptionText);
+		//sql = sqlConn.buildBasicSearchQuery(this.incIngredients, this.remIngredients,this.descriptionText);
 		
 		return sqlConn.executeSearch(sql);
 	}
@@ -115,90 +66,24 @@ public class BasicSearchController implements IController,ActionListener
 	public void actionPerformed(ActionEvent e)
 	{
 		 String actionCommand = ((JButton) e.getSource()).getActionCommand();
-		 if(actionCommand.equals("btnNewButton"))
-		 {
-			 this.view.getModel().addRow(new Object[]{"", "", ""});
-		 }
-		 else if(actionCommand.equals("button_1"))
-		 {
-			 int[] rows = this.view.getTable().getSelectedRows();
-			 for(int i=0;i<rows.length;i++)
-			 {
-				 this.view.getModel().removeRow(rows[i]-i);
-			 }
-		 }
-		 else if(actionCommand.equals("button"))
-		 {
-			 this.view.getModel2().addRow(new Object[]{"", "", ""});
-		 }
-		 else if(actionCommand.equals("button_2"))
-		 {
-			 int[] rows = this.view.getTable2().getSelectedRows();
-			 for(int i=0;i<rows.length;i++)
-			 {
-				 this.view.getModel2().removeRow(rows[i]-i);
-			 }
-		 }
-		 else if(actionCommand.equals("back"))
+
+		 if(actionCommand.equals("back"))
 		 {
 			 this.jframe.setFlag(4);
 		 }
-		 else if(actionCommand.equals("bttn"))
+		 else if(actionCommand.equals("Search"))
 		 {
-			getDatIngredients();
-			System.out.println(sqlConn.buildBasicSearchQuery(incIngredients, remIngredients, descriptionText));
-			recipeResults = sqlConn.executeSearch(sqlConn.buildBasicSearchQuery(incIngredients, remIngredients, descriptionText));
-			this.jframe.setFlag(1);
+			 this.descriptionText = this.view.getTextField().getText();
+			 Object[] allSelectedAsArray = this.view.getComboBox().getSelectedObjects();
+			 
+			 for(Object o : allSelectedAsArray)
+			 {
+				 comboboxText = (String) o;
+			 }
+	
+			//System.out.println(sqlConn.buildBasicSearchQuery(incIngredients, remIngredients, descriptionText));
+			//recipeResults = sqlConn.executeSearch(sqlConn.buildBasicSearchQuery(incIngredients, remIngredients, descriptionText));
+			//this.jframe.setFlag(1);
 		 }
-	}
-
-	private void getDatIngredients()
-	{
-		int numRows, i;
-		String name = null, amount = null, unit = null;
-		
-		/*obtain the data of the descriptiontext*/
-		this.descriptionText = this.view.getTextField().getText();
-		/*obtain the data of the first table*/
-		numRows = this.view.getModel().getRowCount();
-		for(i=0;i<numRows;i++)
-		{
-			try
-			{
-				name = (String) ((Vector)this.view.getModel().getDataVector().elementAt(i)).elementAt(0);
-			}
-			catch(Exception e)
-			{
-				name = "";
-			}
-			
-			try
-			{
-				amount = (String) ((Vector)this.view.getModel().getDataVector().elementAt(i)).elementAt(1);
-			}
-			catch(Exception e)
-			{
-				amount = "";
-			}
-			
-			try
-			{
-				unit = (String) ((Vector)this.view.getModel().getDataVector().elementAt(i)).elementAt(2);
-			}
-			catch(Exception e)
-			{
-				unit = "";
-			}
-				incIngredients.add(new IngredientFilter(name, amount, unit));
-		}
-		/*obtain the data of the second table*/
-		numRows = this.view.getModel2().getRowCount();
-		for(i=0;i<numRows;i++)
-		{
-			name = (String) ((Vector)this.view.getModel2().getDataVector().elementAt(i)).elementAt(0);
-			amount = (String) ((Vector)this.view.getModel2().getDataVector().elementAt(i)).elementAt(1);
-			unit = (String) ((Vector)this.view.getModel2().getDataVector().elementAt(i)).elementAt(2);
-			remIngredients.add(new IngredientFilter(name, amount, unit));
-		}
 	}
 }

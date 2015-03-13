@@ -51,6 +51,14 @@ public class PredefinedSearchView extends JPanel
 		this.model = new DefaultTableModel();
 		this.model.addColumn("Name");
 		this.model.addColumn("Description");
+		this.model.addRow(new Object[]{"All","All recipes."});
+		this.model.addRow(new Object[]{"Healhty","Food for a healthy living."});
+		this.model.addRow(new Object[]{"Fat","All fast food."});
+		this.model.addRow(new Object[]{"Trending","Creative Cuisine"});
+		this.model.addRow(new Object[]{"Spanish","Traditional spanish recipes."});
+		this.model.addRow(new Object[]{"Italian","Traditional italian recipes."});
+		this.model.addRow(new Object[]{"American","Traditional american recipes."});
+		this.model.addRow(new Object[]{"Asian","Traditional asian recipes."});
 		table = new JTable(this.model);
 		scrollPane.setViewportView(table);
 		

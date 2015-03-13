@@ -89,6 +89,26 @@ public class SqlConnection
 		}
 	}
 	
+	public String buldBasicSearchQuery(String name, String category)
+	{
+		String query = "";
+		if(!name.isEmpty())
+		{
+			query = "SELECT * FROM RECIPE r WHERE r.name like '%"+name.replace("'", "\"")+"%'";
+			if(!category.equals("All"))
+				query = query + " AND r.category like '%"+category.replace("'", "\"")+"%'";
+		}
+		else
+		{
+			query = "SELECT * FROM RECIPE r";
+			if(!category.equals("All"))
+			{
+				query = query + " WHERE r.category like '%"+category+"%'";
+			}
+		}
+		return query;
+	}
+	
 	public String buildBasicSearchQuery(ArrayList<IngredientFilter> incIngredients, ArrayList<IngredientFilter> remIngredients, String descriptionText)
 	{
 		String query = "SELECT r.recipeId as id, r.name as recipeName,r.description as recipeDescription, r.timePrep as recipeTimePrep, r.timeCook as recipeTimeCook, r.timeTotal as recipeTimeTotal, r.rating as recipeRating, r.category as recipeCategory FROM RECIPE as r, INGREDIENT as i WHERE r.recipeId=i.recipeId";

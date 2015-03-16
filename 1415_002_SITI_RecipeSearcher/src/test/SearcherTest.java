@@ -89,7 +89,13 @@ public class SearcherTest
 		/*basic search-search*/
 		else if(this.flag == 5)
 		{
-			
+			this.window.remove(bsview);
+			this.bsview.setVisible(false);
+			this.rscontroller.setRecipeResults(this.bscontroller.getRecipeResults());
+			this.rsview.setVisible(true);
+			this.window.add(rsview);
+			this.bsview.updateUI();
+			this.rsview.updateUI();
 		}
 		/*advanced search-back*/
 		else if(this.flag == 6)
@@ -157,5 +163,6 @@ public class SearcherTest
 		program.asview.setVisible(true);
 		program.window.add(program.dfview);
 		program.dfview.updateUI();
+		program.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 }

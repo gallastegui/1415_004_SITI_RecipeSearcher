@@ -21,7 +21,8 @@ public class ResultsController implements IController,ActionListener
 {
 	private ResultsView view;
 	private ArrayList<Recipe> recipeResults;
-	
+	private int recipeConsult;
+
 	public ResultsView getView()
 	{
 		return view;
@@ -42,6 +43,17 @@ public class ResultsController implements IController,ActionListener
 		this.recipeResults = recipeResults;
 		insertResultsTable();	
 	}
+	
+	public int getRecipeConsult()
+	{
+		return recipeConsult;
+	}
+
+	public void setRecipeConsult(int recipeConsult)
+	{
+		this.recipeConsult = recipeConsult;
+		JOptionPane.showMessageDialog(view, this.recipeConsult + ": controller!");
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e)
@@ -54,10 +66,10 @@ public class ResultsController implements IController,ActionListener
 	{
 		for(Recipe r : recipeResults)
 		{
-			this.view.getModel().addRow(new Object[]{r.getName(), r.getTimeTotal(), r.getRating(), "visualize"});
+			this.view.getModel().addRow(new Object[]{r.getRecipeId(),r.getName(), r.getTimeTotal(), r.getRating(), "visualize"});
 		}
 		this.view.getTable().getColumn("Explore").setCellRenderer(new ButtonRenderer());
-		this.view.getTable().getColumn("Explore").setCellEditor(new ButtonEditor(new JCheckBox()));
+		this.view.getTable().getColumn("Explore").setCellEditor(new ButtonEditor(new JCheckBox(), this));
 	}
 }
 
@@ -95,12 +107,15 @@ class ButtonEditor extends DefaultCellEditor
   protected JButton button;
 
   private String label;
-
+  private String labelId;
   private boolean isPushed;
+  
+  private ResultsController controller;
 
-  public ButtonEditor(JCheckBox checkBox)
+  public ButtonEditor(JCheckBox checkBox, ResultsController controller)
   {
     super(checkBox);
+	this.controller = controller;
     button = new JButton();
     button.setOpaque(true);
     button.addActionListener(new ActionListener() {
@@ -120,6 +135,7 @@ class ButtonEditor extends DefaultCellEditor
       button.setBackground(table.getBackground());
     }
     label = (value == null) ? "" : value.toString();
+    labelId =String.valueOf(table.getModel().getValueAt(row, 0));
     button.setText(label);
     isPushed = true;
     return button;
@@ -129,7 +145,7 @@ class ButtonEditor extends DefaultCellEditor
     if (isPushed) {
       // 
       // 
-      JOptionPane.showMessageDialog(button, label + ": Ouch!");
+      this.controller.setRecipeConsult(Integer.parseInt(labelId));
       // System.out.println(label + ": Ouch!");
     }
     isPushed = false;

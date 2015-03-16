@@ -46,6 +46,7 @@ public class ResultsView  extends JPanel
 		JLabel lblResultadosDeLa = new JLabel("Resultados de la b\u00FAsqueda");
 		
 		this.model = new DefaultTableModel();
+		this.model.addColumn("Recipe id");
 		this.model.addColumn("Recipe name");
 		this.model.addColumn("Total time");
 		this.model.addColumn("Rating");

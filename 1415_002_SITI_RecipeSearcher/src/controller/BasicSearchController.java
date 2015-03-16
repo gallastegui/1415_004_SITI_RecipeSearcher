@@ -66,13 +66,15 @@ public class BasicSearchController implements IController,ActionListener
 	public void actionPerformed(ActionEvent e)
 	{
 		 String actionCommand = ((JButton) e.getSource()).getActionCommand();
-
+		 
 		 if(actionCommand.equals("back"))
 		 {
 			 this.jframe.setFlag(4);
 		 }
 		 else if(actionCommand.equals("Search"))
 		 {
+			 String query = "";
+			 
 			 this.descriptionText = this.view.getTextField().getText();
 			 Object[] allSelectedAsArray = this.view.getComboBox().getSelectedObjects();
 			 
@@ -80,7 +82,10 @@ public class BasicSearchController implements IController,ActionListener
 			 {
 				 comboboxText = (String) o;
 			 }
-	
+			 
+			 query = sqlConn.buildBasicSearchQuery(descriptionText, comboboxText);
+			 recipeResults = sqlConn.executeSearch(query);
+			 this.jframe.setFlag(5);
 			//System.out.println(sqlConn.buildBasicSearchQuery(incIngredients, remIngredients, descriptionText));
 			//recipeResults = sqlConn.executeSearch(sqlConn.buildBasicSearchQuery(incIngredients, remIngredients, descriptionText));
 			//this.jframe.setFlag(1);

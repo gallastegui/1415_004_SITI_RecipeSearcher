@@ -77,7 +77,7 @@ public class SqlConnection
 			rs = stmt.executeQuery(sql);
 			while (rs.next())
 			{
-				recipes.add(new Recipe(rs.getInt("id"), rs.getString("recipeName"), rs.getString("recipeDescription"), rs.getString("recipeTimePrep"), rs.getString("recipeTimeCook"), rs.getString("recipeTimeTotal"), rs.getString("recipeRating"), rs.getString("recipeCategory")));
+				recipes.add(new Recipe(rs.getInt("recipeId"), rs.getString("name"), rs.getString("description"), rs.getString("TimePrep"), rs.getString("TimeCook"), rs.getString("TimeTotal"),rs.getString("Category"), rs.getString("Rating")));
 			}
 			rs.close();
 		    stmt.close();
@@ -89,7 +89,7 @@ public class SqlConnection
 		}
 	}
 	
-	public String buldBasicSearchQuery(String name, String category)
+	public String buildBasicSearchQuery(String name, String category)
 	{
 		String query = "";
 		if(!name.isEmpty())

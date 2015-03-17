@@ -15,7 +15,7 @@ import model.connector.SqlConnection;
 import model.entity.Recipe;
 import model.filtering.*;
 
-public class BasicSearchController implements IController,ActionListener
+public class BasicSearchController implements IController, ActionListener
 {
 	private String sql;
 	private SqlConnection sqlConn;

@@ -15,12 +15,15 @@ import javax.swing.table.TableCellRenderer;
 
 import model.entity.Recipe;
 import model.filtering.IngredientFilter;
+import test.SearcherTest;
 import view.ResultsView;
 
 public class ResultsController implements IController,ActionListener
 {
 	private ResultsView view;
 	private ArrayList<Recipe> recipeResults;
+	private SearcherTest jframe;
+
 	private int recipeConsult;
 
 	public ResultsView getView()
@@ -52,7 +55,18 @@ public class ResultsController implements IController,ActionListener
 	public void setRecipeConsult(int recipeConsult)
 	{
 		this.recipeConsult = recipeConsult;
-		JOptionPane.showMessageDialog(view, this.recipeConsult + ": controller!");
+		jframe.setFlagRecipe(this.recipeConsult);
+		jframe.setFlag(10);
+	}
+	
+	public SearcherTest getJframe()
+	{
+		return jframe;
+	}
+
+	public void setJframe(SearcherTest jframe)
+	{
+		this.jframe = jframe;
 	}
 
 	@Override

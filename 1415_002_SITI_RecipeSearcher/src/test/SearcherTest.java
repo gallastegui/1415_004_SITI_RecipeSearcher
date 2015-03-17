@@ -2,22 +2,25 @@ package test;
 
 import javax.swing.JFrame;
 
+import model.entity.Recipe;
 import controller.AdvancedSearchController;
 import controller.BasicSearchController;
 import controller.DefaultController;
 import controller.PredefinedSearchController;
+import controller.RecipeController;
 import controller.ResultsController;
 import view.AdvancedSearchView;
 import view.BasicSearchView;
 import view.DefaultView;
 import view.PredefinedSearchView;
+import view.RecipeView;
 import view.ResultsView;
 import view.SimpleSearchView;
 
 public class SearcherTest
 {
 	JFrame window;
-	private int flag;
+	private int flag, flagRecipe;
 	private BasicSearchView bsview;
 	private BasicSearchController bscontroller;
 	private ResultsView rsview;
@@ -28,7 +31,8 @@ public class SearcherTest
 	private AdvancedSearchController ascontroller;
 	private PredefinedSearchView psview;
 	private PredefinedSearchController pscontroller;
-	
+	private RecipeController rpcontroller;
+	private RecipeView rpview;
 
 	public SearcherTest()
 	{
@@ -127,7 +131,35 @@ public class SearcherTest
 		{
 			
 		}
+		/*view Recipe*/
+		else if(this.flag == 10)
+		{
+			this.window.remove(rsview);
+			this.rsview.setVisible(false);
+			this.rpview.setVisible(true);
+			this.window.add(rpview);
+			this.rsview.updateUI();
+			this.rpview.updateUI();
+		}
 		//this.rscontroller.setRecipeResults(this.bscontroller.getRecipeResults());
+	}
+	
+	public int getFlagRecipe()
+	{
+		return flagRecipe;
+	}
+
+	public void setFlagRecipe(int flagRecipe)
+	{
+		this.flagRecipe = flagRecipe;
+		for(Recipe r : rscontroller.getRecipeResults())
+		{
+			if(r.getRecipeId() == this.flagRecipe)
+			{
+				rpcontroller.setAsocRecipe(r);
+			}
+		}
+		this.rpview.fillParameters();
 	}
 	
 	public static void main(String args[])
@@ -149,18 +181,25 @@ public class SearcherTest
 		program.pscontroller = new PredefinedSearchController();
 		program.psview = new PredefinedSearchView(program.pscontroller);
 		
+		program.rpcontroller = new RecipeController();
+		program.rpview = new RecipeView(program.rpcontroller);
+		
 		program.bscontroller.setJframe(program);
 		program.dfcontroller.setJframe(program);
 		program.ascontroller.setJframe(program);
 		program.pscontroller.setJframe(program);
+		program.rscontroller.setJframe(program);
+		program.rpcontroller.setJframe(program);
 		program.bscontroller.setView(program.bsview);
 		program.rscontroller.setView(program.rsview);
 		program.ascontroller.setView(program.asview);
+		
 		
 		program.bsview.setVisible(true);
 		program.rsview.setVisible(true);
 		program.dfview.setVisible(true);
 		program.asview.setVisible(true);
+		program.rpview.setVisible(false);
 		program.window.add(program.dfview);
 		program.dfview.updateUI();
 		program.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

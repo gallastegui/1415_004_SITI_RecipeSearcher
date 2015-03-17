@@ -1,5 +1,7 @@
 package model.entity;
 
+import java.util.ArrayList;
+
 public class Recipe
 {
 	private Integer recipeId;
@@ -10,7 +12,10 @@ public class Recipe
 	private String timeTotal;
 	private String category;
 	private String rating;
-	
+	private ArrayList<Direction> directions;
+	private ArrayList<Ingredient> ingredients;
+	private ArrayList<Nutrient> nutrients;
+
 	public Recipe(Integer recipeId, String name, String description, String timePrep, String timeCook, String timeTotal, String category, String rating)
 	{
 		this.recipeId = recipeId;
@@ -21,6 +26,10 @@ public class Recipe
 		this.timeTotal = timeTotal;
 		this.category = category;
 		this.rating = rating;
+		
+		directions = new ArrayList<Direction>();
+		ingredients = new ArrayList<Ingredient>();
+		nutrients = new ArrayList<Nutrient>();
 	}
 	
 	public Integer getRecipeId()
@@ -99,5 +108,34 @@ public class Recipe
 	public void setRating(String rating)
 	{
 		this.rating = rating;
+	}
+	public ArrayList<Direction> getDirections()
+	{
+		return directions;
+	}
+
+	public void setDirections(ArrayList<Direction> directions)
+	{
+		this.directions = directions;
+	}
+
+	public ArrayList<Ingredient> getIngredients()
+	{
+		return ingredients;
+	}
+
+	public void setIngredients(ArrayList<Ingredient> ingredients)
+	{
+		this.ingredients = ingredients;
+	}
+
+	public ArrayList<Nutrient> getNutrients()
+	{
+		return nutrients;
+	}
+
+	public void setNutrients(ArrayList<Nutrient> nutrients)
+	{
+		this.nutrients = nutrients;
 	}
 }

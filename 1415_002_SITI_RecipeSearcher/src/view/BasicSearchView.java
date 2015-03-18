@@ -48,7 +48,7 @@ public class BasicSearchView extends JPanel
 		JLabel lblNewLabel_1 = new JLabel("Search by title:");
 		lblNewLabel_1.setFont(new Font("Arial", Font.BOLD, 15));
 		
-		textField = new JTextField();
+		textField = new JTextField("");
 		textField.setColumns(10);
 		
 		JButton btnSearch = new JButton("Search");
@@ -65,7 +65,7 @@ public class BasicSearchView extends JPanel
 		
 		JLabel lblCategory = new JLabel("Category:");
 		lblCategory.setFont(new Font("Arial", Font.BOLD, 15));
-		comboBox = new JComboBox(labels5);
+		this.comboBox = new JComboBox(labels5);
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)

@@ -32,7 +32,7 @@ public class ResultsView  extends JPanel
 	
 	public ResultsView(ResultsController controller)
 	{
-		this.setBackground(Color.WHITE);
+		setBackground(new Color(210, 225, 240));
 		this.controller = controller;
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));	
 		createComponents();
@@ -43,9 +43,17 @@ public class ResultsView  extends JPanel
 		JPanel panel = new JPanel();
 		JPanel panel_1 = new JPanel();
 		JScrollPane scrollPane;
-		JLabel lblResultadosDeLa = new JLabel("Resultados de la b\u00FAsqueda");
+		JLabel lblResultadosDeLa = new JLabel("We found these recipes for you:");
 		
-		this.model = new DefaultTableModel();
+		this.model = new DefaultTableModel() {
+
+		    @Override
+		    public boolean isCellEditable(int row, int column) {
+		    	if(column == 4)
+		    		return true;
+		    	return false;
+		    }
+		};
 		this.model.addColumn("Recipe id");
 		this.model.addColumn("Recipe name");
 		this.model.addColumn("Total time");
@@ -58,19 +66,21 @@ public class ResultsView  extends JPanel
 		scrollPane = new JScrollPane(table);
 		
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		panel.setBackground(new Color(210, 225, 240));
+		panel_1.setBackground(new Color(210, 225, 240));
 		panel_1.add(scrollPane);
 		panel.add(lblResultadosDeLa);
 		add(panel);
 		add(panel_1);
 		
 		JPanel panel_2 = new JPanel();
+		panel_2.setBackground(new Color(210, 225, 240));
 		add(panel_2);
 		
 		JButton btnVolver = new JButton("Go Back");
-		btnVolver.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
+		btnVolver.addActionListener(this.controller);
+		btnVolver.setBackground(new Color(255, 102, 0));
+		btnVolver.setForeground(Color.WHITE);
 		panel_2.add(btnVolver);
 	}
 	

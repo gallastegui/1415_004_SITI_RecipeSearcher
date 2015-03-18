@@ -14,8 +14,7 @@ public class RecipeController implements IController,ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		
-		
+		this.jframe.setFlag(11);
 	}
 	
 	public Recipe getAsocRecipe()

@@ -72,8 +72,13 @@ public class ResultsController implements IController,ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-
-		
+		int i;
+		this.jframe.setFlag(12);
+		recipeResults.clear();
+		for(i = this.view.getModel().getRowCount() - 1; i>=0;i--)
+		{
+			this.view.getModel().removeRow(i);
+		}
 	}
 	
 	public void insertResultsTable()

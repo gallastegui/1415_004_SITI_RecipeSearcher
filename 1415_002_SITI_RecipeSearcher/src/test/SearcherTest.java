@@ -33,11 +33,13 @@ public class SearcherTest
 	private PredefinedSearchController pscontroller;
 	private RecipeController rpcontroller;
 	private RecipeView rpview;
+	private String selectedSearcher;
 
 	public SearcherTest()
 	{
 		this.flag = 0;
 		this.window = new JFrame();
+		selectedSearcher = "";
 		window.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		window.setVisible(true);
 	}
@@ -53,6 +55,7 @@ public class SearcherTest
 		/*default to advanced search*/
 		if(this.flag == 1)
 		{
+			selectedSearcher = "advanced";
 			this.window.remove(dfview);
 			this.dfview.setVisible(false);
 			this.asview.setVisible(true);
@@ -63,6 +66,7 @@ public class SearcherTest
 		/*default to basic search*/
 		else if(this.flag == 2)
 		{
+			selectedSearcher = "basic";
 			this.window.remove(dfview);
 			this.dfview.setVisible(false);
 			this.bsview.setVisible(true);
@@ -73,6 +77,7 @@ public class SearcherTest
 		/*default to predefined search*/
 		else if(this.flag == 3)
 		{
+			selectedSearcher = "predefined";
 			this.window.remove(dfview);
 			this.dfview.setVisible(false);
 			this.psview.setVisible(true);
@@ -140,6 +145,42 @@ public class SearcherTest
 			this.window.add(rpview);
 			this.rsview.updateUI();
 			this.rpview.updateUI();
+		}
+		/*Recipe back*/
+		else if(this.flag == 11)
+		{
+			this.window.remove(rpview);
+			this.rpview.setVisible(false);
+			this.rsview.setVisible(true);
+			this.window.add(this.rsview);
+			this.rpview.updateUI();
+			this.rsview.updateUI();
+		}
+		else if(this.flag == 12)
+		{
+			this.window.remove(rsview);
+			this.rsview.setVisible(false);
+			if(selectedSearcher.equals("basic"))
+			{
+				this.bsview.setVisible(true);
+				this.window.add(this.bsview);
+				this.rsview.updateUI();
+				this.bsview.updateUI();
+			}
+			else if(selectedSearcher.equals("advanced"))
+			{
+				this.asview.setVisible(true);
+				this.window.add(this.asview);
+				this.rsview.updateUI();
+				this.asview.updateUI();
+			}
+			else if(selectedSearcher.equals("predefined"))
+			{
+				this.psview.setVisible(true);
+				this.window.add(this.psview);
+				this.rsview.updateUI();
+				this.psview.updateUI();
+			}
 		}
 		//this.rscontroller.setRecipeResults(this.bscontroller.getRecipeResults());
 	}

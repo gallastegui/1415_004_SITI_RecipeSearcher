@@ -5,6 +5,12 @@ public class Direction
 	private Integer directionId;
 	private String description;
 	
+	public Direction(Integer directionId, String description)
+	{
+		this.directionId = directionId;
+		this.description = description;
+	}
+	
 	public Integer getDirectionId()
 	{
 		return directionId;

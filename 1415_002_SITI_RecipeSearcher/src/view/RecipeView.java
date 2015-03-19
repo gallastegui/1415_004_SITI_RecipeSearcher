@@ -21,6 +21,7 @@ import javax.swing.JTextArea;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.DropMode;
+import javax.swing.JScrollBar;
 
 public class RecipeView extends JPanel
 {
@@ -34,6 +35,9 @@ public class RecipeView extends JPanel
 	private DefaultTableModel model, model2;
 	private JScrollPane scrollPane;
 	private JScrollPane scrollPane_1;
+	
+	private static final int TA_ROWS = 20;
+	private static final int TA_COLS = 35;
 	
 	public RecipeView(RecipeController controller)
 	{
@@ -53,11 +57,10 @@ public class RecipeView extends JPanel
 		model = new DefaultTableModel();
 		model.addColumn("Name");
 		model.addColumn("Amount");
-		model.addColumn("Unit");
 		model2 = new DefaultTableModel();
 		model2.addColumn("Name");
 		model2.addColumn("Amount");
-		model2.addColumn("Unit");
+		model2.addColumn("Percentage");
 		JLabel lblIngredients = new JLabel("Ingredients:");
 		lblIngredients.setFont(new Font("Arial", Font.BOLD, 15));
 		
@@ -68,54 +71,45 @@ public class RecipeView extends JPanel
 		btnBack.setForeground(new Color(255, 255, 255));
 		btnBack.setBackground(new Color(255, 102, 0));
 		
-		this.txtrRecipeDirections = new JTextArea("hola");
-		txtrRecipeDirections.setEditable(false);
-		txtrRecipeDirections.setText("Recipe Directions");
-		
-		this.txtrRecipeDescription = new JTextArea("hoa");
-		txtrRecipeDescription.setEditable(false);
-		txtrRecipeDescription.setText("Recipe Description");
-		
 		scrollPane = new JScrollPane();
 		
 		scrollPane_1 = new JScrollPane();
+		
+		JScrollPane scrollPane_2 = new JScrollPane();
+		
+		JScrollPane scrollPane_3 = new JScrollPane();
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(466)
-					.addComponent(lblRecipeName)
-					.addContainerGap(765, Short.MAX_VALUE))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(21)
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(lblDescription)
-							.addContainerGap())
-						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-							.addGroup(groupLayout.createSequentialGroup()
-								.addComponent(lblRecipeCategory)
-								.addContainerGap())
+							.addGap(466)
+							.addComponent(lblRecipeName))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGap(21)
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblDescription)
+								.addComponent(lblRecipeCategory)
+								.addComponent(lblDirections, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE)
 								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(lblDirections, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE)
-									.addContainerGap())
-								.addGroup(groupLayout.createSequentialGroup()
-									.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-										.addComponent(txtrRecipeDescription, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 1298, Short.MAX_VALUE)
-										.addComponent(txtrRecipeDirections, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 1298, Short.MAX_VALUE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+										.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
+											.addComponent(scrollPane_3, Alignment.LEADING)
+											.addComponent(scrollPane_2, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 1294, Short.MAX_VALUE))
 										.addGroup(groupLayout.createSequentialGroup()
-											.addPreferredGap(ComponentPlacement.RELATED)
-											.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-												.addComponent(lblIngredients, Alignment.LEADING)
-												.addComponent(scrollPane, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 570, GroupLayout.PREFERRED_SIZE))
-											.addGap(36)
+											.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+												.addComponent(lblIngredients)
+												.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 570, GroupLayout.PREFERRED_SIZE))
+											.addGap(53)
 											.addComponent(btnBack)
-											.addPreferredGap(ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
+											.addPreferredGap(ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
 											.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 												.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 572, GroupLayout.PREFERRED_SIZE)
-												.addComponent(lblNutrition))))
-									.addGap(35))))))
+												.addComponent(lblNutrition))
+											.addGap(35)))))))
+					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -125,14 +119,14 @@ public class RecipeView extends JPanel
 					.addGap(5)
 					.addComponent(lblDescription)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(txtrRecipeDescription, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(scrollPane_2, GroupLayout.PREFERRED_SIZE, 103, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblDirections)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(txtrRecipeDirections, GroupLayout.PREFERRED_SIZE, 123, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+					.addComponent(scrollPane_3, GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGap(18)
 							.addComponent(lblRecipeCategory)
 							.addGap(18)
 							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
@@ -140,13 +134,28 @@ public class RecipeView extends JPanel
 								.addComponent(lblNutrition))
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
-								.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE))
+								.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+								.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE))
 							.addGap(32))
 						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 							.addComponent(btnBack)
-							.addGap(31))))
+							.addGap(72))))
 		);
+		
+		this.txtrRecipeDirections = new JTextArea(TA_ROWS, TA_COLS);
+		scrollPane_3.setViewportView(txtrRecipeDirections);
+		this.txtrRecipeDirections.setWrapStyleWord(true);
+		this.txtrRecipeDirections.setLineWrap(true);
+		txtrRecipeDirections.setEditable(false);
+		txtrRecipeDirections.setText("Recipe Directions");
+		
+		this.txtrRecipeDescription = new JTextArea(TA_ROWS, TA_COLS);
+		scrollPane_2.setViewportView(txtrRecipeDescription);
+		this.txtrRecipeDescription.setWrapStyleWord(true);
+		this.txtrRecipeDescription.setLineWrap(true);
+		txtrRecipeDescription.setEditable(false);
+		txtrRecipeDescription.setText("Recipe Description");
 		groupLayout.setHonorsVisibility(false);
 		this.table_1 = new JTable(model2);
 		scrollPane_1.setViewportView(table_1);
@@ -165,22 +174,38 @@ public class RecipeView extends JPanel
 		lblRecipeName.setText(this.controller.getAsocRecipe().getName()+"( rating:"+this.controller.getAsocRecipe().getRating()+" )");
 		lblRecipeCategory.setText(this.controller.getAsocRecipe().getCategory());
 		this.txtrRecipeDescription.setText(this.controller.getAsocRecipe().getDescription());
+		this.controller.getAsocRecipe().getIngredients().clear();
+		this.controller.getAsocRecipe().getNutrients().clear();
+		this.controller.getAsocRecipe().getDirections().clear();
+		int i;
 		
+		for(i = model.getRowCount() - 1; i >= 0; i--)
+		{
+			model.removeRow(i);
+		}
+		for(i = model2.getRowCount() - 1; i >= 0; i--)
+		{
+			model2.removeRow(i);
+		}
+		
+		this.controller.getRecipeValues();
+		i = 1;
 		for(Direction d : this.controller.getAsocRecipe().getDirections())
 		{
-			directions = directions + d.getDirectionId() +": "+d.getDescription() +"\n\n";
+			directions = directions + i +": "+d.getDescription() +"\n\n";
+			i++;
 		}
 		
 		this.txtrRecipeDirections.setText(directions);
 		
-		for(Ingredient i : this.controller.getAsocRecipe().getIngredients())
+		for(Ingredient in : this.controller.getAsocRecipe().getIngredients())
 		{
-			model.addRow(new Object[]{i.getName(),i.getAmount(),""});
+			model.addRow(new Object[]{in.getName(),in.getAmount()});
 		}
 		
 		for(Nutrient n : this.controller.getAsocRecipe().getNutrients())
 		{
-			model2.addRow(new Object[]{n.getName(),"",""});
+			model2.addRow(new Object[]{n.getName(),n.getAmount(),n.getPercentage()});
 		}
 	}
 }

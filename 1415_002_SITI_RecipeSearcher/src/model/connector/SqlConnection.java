@@ -89,6 +89,96 @@ public class SqlConnection
 		}
 	}
 	
+	public ArrayList<Ingredient> executeIngredientSearch(String sql)
+	{
+		Statement stmt = null;
+		ResultSet rs = null;
+		ArrayList<Ingredient> ings = new ArrayList<Ingredient>();
+		
+		if(sql == null)
+			return null;
+		
+		if(connector == null)
+			connectDatabase();
+		
+		try
+		{
+			stmt = connector.createStatement();
+			rs = stmt.executeQuery(sql);
+			while (rs.next())
+			{
+				ings.add(new Ingredient(rs.getInt("ingredientId"), rs.getString("name"), rs.getString("amount")));
+			}
+			rs.close();
+		    stmt.close();
+		    return ings;
+		} catch (SQLException e)
+		{
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}		
+	}
+	
+	public ArrayList<Nutrient> executeNutrientSearch(String sql)
+	{
+		Statement stmt = null;
+		ResultSet rs = null;
+		ArrayList<Nutrient> nut = new ArrayList<Nutrient>();
+		
+		if(sql == null)
+			return null;
+		
+		if(connector == null)
+			connectDatabase();
+		
+		try
+		{
+			stmt = connector.createStatement();
+			rs = stmt.executeQuery(sql);
+			while (rs.next())
+			{
+				nut.add(new Nutrient(rs.getInt("nutritionId"), rs.getString("name"), rs.getString("amount"), rs.getString("percentage")));
+			}
+			rs.close();
+		    stmt.close();
+		    return nut;
+		} catch (SQLException e)
+		{
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}		
+	}
+	
+	public ArrayList<Direction> executeDirectionSearch(String sql)
+	{
+		Statement stmt = null;
+		ResultSet rs = null;
+		ArrayList<Direction> dir = new ArrayList<Direction>();
+		
+		if(sql == null)
+			return null;
+		
+		if(connector == null)
+			connectDatabase();
+		
+		try
+		{
+			stmt = connector.createStatement();
+			rs = stmt.executeQuery(sql);
+			while (rs.next())
+			{
+				dir.add(new Direction(rs.getInt("directionId"), rs.getString("description")));
+			}
+			rs.close();
+		    stmt.close();
+		    return dir;
+		} catch (SQLException e)
+		{
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}		
+	}
+	
 	public String buildBasicSearchQuery(String name, String category)
 	{
 		String query = "";
@@ -185,5 +275,19 @@ public class SqlConnection
 		query = query + ";";
 		
 		return query;
+	}
+	public String buildRecipeDirectionsQuery(int recipeId)
+	{
+		return "SELECT d.directionId, d.description FROM RECIPE r left JOIN DIRECTION d ON r.recipeID = d.recipeId where r.recipeId = "+recipeId+" order by directionId";
+	}
+	public String buildRecipeIngredientsQuery(int recipeId)
+	{
+		
+		return "SELECT i.ingredientId, i.name, i.amount FROM RECIPE r LEFT JOIN INGREDIENT i ON r.recipeId = i.recipeId where r.recipeId ="+recipeId;
+	}
+	
+	public String buildRecipeNutritionsQuery(int recipeId)
+	{
+		return "select n.nutritionId, n.name, re.amount, re.percentage from RECIPE r, NUTRITION n, REL_RECIPE_NUTRITION re where r.recipeId = re.recipeId AND n.nutritionId = re.nutritionId AND r.recipeId = "+recipeId;
 	}
 }

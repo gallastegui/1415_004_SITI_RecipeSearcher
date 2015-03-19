@@ -6,6 +6,13 @@ public class Ingredient
 	private String name;
 	private String amount;
 	
+	public Ingredient(Integer ingredientId, String name, String amount)
+	{
+		this.ingredientId = ingredientId;
+		this.name = name;
+		this.amount = amount;
+	}
+	
 	public Integer getIngredientId()
 	{
 		return ingredientId;

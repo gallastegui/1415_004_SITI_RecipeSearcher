@@ -36,6 +36,8 @@ public class AdvancedSearchView extends JPanel
 	final String labels3[] = { "", "1 star", "2 stars", "3 stars", "4 stars", "5 stars"};
 	final String labels4[] = { "", "Easy", "Medium", "Hard"};
 	final String labels5[] = { "", "Appetizer", "Breakfast & Brunch", "Chicken", "Main Dish"};
+	JComboBox comboBox2, comboBox_1, comboBox_2, comboBox_3;
+
 	private AdvancedSearchController controller;
 	
 	public AdvancedSearchView(AdvancedSearchController controller)
@@ -90,19 +92,18 @@ public class AdvancedSearchView extends JPanel
 		JScrollPane scrollPane = new JScrollPane(table);
 		JScrollPane scrollPane_1 = new JScrollPane(table2);
 		model3 = new DefaultComboBoxModel(labels);
-		JComboBox comboBox2 = new JComboBox(model3);
+		comboBox2 = new JComboBox(model3);
 		
 		model4 = new DefaultComboBoxModel(labels2);
-		JComboBox comboBox = new JComboBox(model4);
 		
 		model5 = new DefaultComboBoxModel(labels3);
-		JComboBox comboBox_1 = new JComboBox(model5);
+		comboBox_1 = new JComboBox(model5);
 		
 		model6 = new DefaultComboBoxModel(labels4);
-		JComboBox comboBox_2 = new JComboBox(model6);
+		comboBox_2 = new JComboBox(model6);
 		
 		model7 = new DefaultComboBoxModel(labels5);
-		JComboBox comboBox_3 = new JComboBox(model7);
+		comboBox_3 = new JComboBox(model7);
 		
 		JButton btnSearch = new JButton("Search");
 		btnSearch.setForeground(Color.WHITE);
@@ -118,9 +119,6 @@ public class AdvancedSearchView extends JPanel
 		
 		JLabel lblTime = new JLabel("Time");
 		lblTime.setFont(new Font("Arial", Font.BOLD, 14));
-		
-		JLabel lblAvailability = new JLabel("availability");
-		lblAvailability.setFont(new Font("Arial", Font.BOLD, 14));
 		
 		JLabel lblStars = new JLabel("Stars");
 		lblStars.setFont(new Font("Arial", Font.BOLD, 14));
@@ -147,67 +145,67 @@ public class AdvancedSearchView extends JPanel
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(499)
-					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 283, GroupLayout.PREFERRED_SIZE))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(115)
-					.addComponent(lblNewLabel_1, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(115)
-					.addComponent(textField, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(115)
-					.addComponent(lblNewLabel_2, GroupLayout.PREFERRED_SIZE, 294, GroupLayout.PREFERRED_SIZE)
-					.addGap(332)
-					.addComponent(lblAddIngredientThat, GroupLayout.PREFERRED_SIZE, 353, GroupLayout.PREFERRED_SIZE))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(115)
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(399)
-							.addComponent(button_1, GroupLayout.PREFERRED_SIZE, 41, GroupLayout.PREFERRED_SIZE))
+							.addGap(499)
+							.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 283, GroupLayout.PREFERRED_SIZE))
 						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(399)
-							.addComponent(btnNewButton))
-						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE))
-					.addGap(186)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(399)
-							.addComponent(button))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(399)
-							.addComponent(button_2, GroupLayout.PREFERRED_SIZE, 41, GroupLayout.PREFERRED_SIZE))
-						.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE)))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(70)
-							.addComponent(btnBack, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-							.addComponent(btnSearch, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE))
-						.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
-							.addGap(56)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblTime)
-								.addComponent(comboBox2, GroupLayout.PREFERRED_SIZE, 149, GroupLayout.PREFERRED_SIZE))
-							.addGap(89)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblAvailability, GroupLayout.PREFERRED_SIZE, 84, GroupLayout.PREFERRED_SIZE))
 							.addGap(115)
+							.addComponent(lblNewLabel_1, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGap(115)
+							.addComponent(textField, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGap(115)
+							.addComponent(lblNewLabel_2, GroupLayout.PREFERRED_SIZE, 294, GroupLayout.PREFERRED_SIZE)
+							.addGap(332)
+							.addComponent(lblAddIngredientThat, GroupLayout.PREFERRED_SIZE, 353, GroupLayout.PREFERRED_SIZE))
+						.addGroup(groupLayout.createSequentialGroup()
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblStars, GroupLayout.PREFERRED_SIZE, 41, GroupLayout.PREFERRED_SIZE)
-								.addComponent(comboBox_1, GroupLayout.PREFERRED_SIZE, 140, GroupLayout.PREFERRED_SIZE))))
-					.addGap(99)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblDificulty, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-						.addComponent(comboBox_2, GroupLayout.PREFERRED_SIZE, 140, GroupLayout.PREFERRED_SIZE))
-					.addGap(100)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(comboBox_3, GroupLayout.PREFERRED_SIZE, 140, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblCategory))
-					.addContainerGap())
+								.addGroup(groupLayout.createSequentialGroup()
+									.addGap(115)
+									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+										.addGroup(groupLayout.createSequentialGroup()
+											.addGap(399)
+											.addComponent(button_1, GroupLayout.PREFERRED_SIZE, 41, GroupLayout.PREFERRED_SIZE))
+										.addGroup(groupLayout.createSequentialGroup()
+											.addGap(399)
+											.addComponent(btnNewButton))
+										.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE)))
+								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+									.addGroup(groupLayout.createSequentialGroup()
+										.addGap(70)
+										.addComponent(btnBack, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+										.addComponent(btnSearch, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE))
+									.addGroup(groupLayout.createSequentialGroup()
+										.addGap(173)
+										.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+											.addComponent(comboBox2, GroupLayout.PREFERRED_SIZE, 149, GroupLayout.PREFERRED_SIZE)
+											.addComponent(lblTime))
+										.addPreferredGap(ComponentPlacement.RELATED, 145, Short.MAX_VALUE)
+										.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+											.addComponent(comboBox_1, GroupLayout.PREFERRED_SIZE, 140, GroupLayout.PREFERRED_SIZE)
+											.addComponent(lblStars, GroupLayout.PREFERRED_SIZE, 41, GroupLayout.PREFERRED_SIZE))
+										.addGap(82))))
+							.addGap(52)
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+										.addComponent(comboBox_2, GroupLayout.PREFERRED_SIZE, 140, GroupLayout.PREFERRED_SIZE)
+										.addComponent(lblDificulty, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE))
+									.addGap(147)
+									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+										.addComponent(comboBox_3, GroupLayout.PREFERRED_SIZE, 140, GroupLayout.PREFERRED_SIZE)
+										.addComponent(lblCategory)))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addGap(399)
+									.addComponent(button))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addGap(399)
+									.addComponent(button_2, GroupLayout.PREFERRED_SIZE, 41, GroupLayout.PREFERRED_SIZE))
+								.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE))))
+					.addGap(171))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -233,22 +231,18 @@ public class AdvancedSearchView extends JPanel
 							.addGap(30)
 							.addComponent(button_2, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE))
 						.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblAvailability, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblCategory, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblTime, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblStars, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblDificulty, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblCategory, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE))
+						.addComponent(lblDificulty, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-							.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(comboBox2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-							.addComponent(comboBox_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(comboBox_2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(comboBox_3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(comboBox_3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(comboBox2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(comboBox_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(comboBox_2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGap(78)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnBack, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
@@ -296,5 +290,55 @@ public class AdvancedSearchView extends JPanel
 	public void setModel2(DefaultTableModel model2) 
 	{
 		this.model2 = model2;
+	}
+	
+	public JTextField getTextField()
+	{
+		return textField;
+	}
+
+	public void setTextField(JTextField textField)
+	{
+		this.textField = textField;
+	}
+	
+	public JComboBox getComboBox2()
+	{
+		return comboBox2;
+	}
+
+	public void setComboBox2(JComboBox comboBox2)
+	{
+		this.comboBox2 = comboBox2;
+	}
+
+	public JComboBox getComboBox_1()
+	{
+		return comboBox_1;
+	}
+
+	public void setComboBox_1(JComboBox comboBox_1)
+	{
+		this.comboBox_1 = comboBox_1;
+	}
+
+	public JComboBox getComboBox_2()
+	{
+		return comboBox_2;
+	}
+
+	public void setComboBox_2(JComboBox comboBox_2)
+	{
+		this.comboBox_2 = comboBox_2;
+	}
+
+	public JComboBox getComboBox_3()
+	{
+		return comboBox_3;
+	}
+
+	public void setComboBox_3(JComboBox comboBox_3)
+	{
+		this.comboBox_3 = comboBox_3;
 	}
 }

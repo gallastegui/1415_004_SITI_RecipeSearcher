@@ -119,7 +119,13 @@ public class SearcherTest
 		/*advanced search-search*/
 		else if(this.flag == 7)
 		{
-			
+			this.window.remove(asview);
+			this.asview.setVisible(false);
+			this.rscontroller.setRecipeResults(this.ascontroller.getRecipeResults());
+			this.rsview.setVisible(true);
+			this.window.add(rsview);
+			this.asview.updateUI();
+			this.rsview.updateUI();
 		}
 		/*predefined search-back*/
 		else if(this.flag == 8)

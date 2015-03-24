@@ -2,10 +2,13 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.JButton;
 
+import model.connector.SqlConnection;
+import model.entity.Recipe;
 import model.filtering.IngredientFilter;
 import test.SearcherTest;
 import view.AdvancedSearchView;
@@ -15,6 +18,22 @@ public class AdvancedSearchController implements IController, ActionListener
 {
 	private SearcherTest jframe;
 	private AdvancedSearchView view;
+	private SqlConnection sqlConn;
+	
+	private ArrayList<IngredientFilter> incIngredients;
+	private ArrayList<IngredientFilter> remIngredients;
+	private String descriptionText;
+	private String comboTime;
+	private String comboStars;
+	private String comboCategory;
+	private ArrayList<Recipe> recipeResults;
+
+	public AdvancedSearchController()
+	{
+		sqlConn = new SqlConnection("C:\\Users\\eps\\allrecipesv1.db");
+		incIngredients = new ArrayList<IngredientFilter>();
+		remIngredients = new ArrayList<IngredientFilter>();
+	}
 	
 	public AdvancedSearchView getView()
 	{
@@ -35,6 +54,16 @@ public class AdvancedSearchController implements IController, ActionListener
 	{
 		this.jframe = jframe;
 	}
+	
+	public ArrayList<Recipe> getRecipeResults()
+	{
+		return recipeResults;
+	}
+
+	public void setRecipeResults(ArrayList<Recipe> recipeResults)
+	{
+		this.recipeResults = recipeResults;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e)
@@ -44,9 +73,12 @@ public class AdvancedSearchController implements IController, ActionListener
 		{
 			this.jframe.setFlag(6);
 		}
-		else if(actionCommand.equals("search"))
+		else if(actionCommand.equals("Search"))
 		{
-			
+			getDatIngredients();
+			System.out.println(sqlConn.buildAdvancedSearchQuery( incIngredients, remIngredients, descriptionText, comboTime, comboStars, comboCategory));
+			recipeResults = sqlConn.executeSearch(sqlConn.buildAdvancedSearchQuery( incIngredients, remIngredients, descriptionText, comboTime, comboStars, comboCategory));
+			this.jframe.setFlag(7);
 		}
 		else if(actionCommand.equals("plus"))
 		{
@@ -159,13 +191,16 @@ public class AdvancedSearchController implements IController, ActionListener
 		 }
 	}*/
 	
-	/*private void getDatIngredients()
+	private void getDatIngredients()
 	{
 		int numRows, i;
 		String name = null, amount = null, unit = null;
 		
 
 		this.descriptionText = this.view.getTextField().getText();
+		this.comboTime = (String) this.view.getComboBox2().getModel().getSelectedItem();
+		this.comboStars = (String) this.view.getComboBox_1().getModel().getSelectedItem();
+		this.comboCategory = (String) this.view.getComboBox_3().getModel().getSelectedItem();
 
 		numRows = this.view.getModel().getRowCount();
 		for(i=0;i<numRows;i++)
@@ -207,6 +242,6 @@ public class AdvancedSearchController implements IController, ActionListener
 			unit = (String) ((Vector)this.view.getModel2().getDataVector().elementAt(i)).elementAt(2);
 			remIngredients.add(new IngredientFilter(name, amount, unit));
 		}
-	}*/
+	}
 
 }

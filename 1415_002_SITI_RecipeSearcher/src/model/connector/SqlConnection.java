@@ -199,13 +199,53 @@ public class SqlConnection
 		return query;
 	}
 	
-	public String buildBasicSearchQuery(ArrayList<IngredientFilter> incIngredients, ArrayList<IngredientFilter> remIngredients, String descriptionText)
+	public String buildAdvancedSearchQuery(ArrayList<IngredientFilter> incIngredients, ArrayList<IngredientFilter> remIngredients, String descriptionText, String comboTime, String comboStars, String comboCategory)
 	{
-		String query = "SELECT r.recipeId as id, r.name as recipeName,r.description as recipeDescription, r.timePrep as recipeTimePrep, r.timeCook as recipeTimeCook, r.timeTotal as recipeTimeTotal, r.rating as recipeRating, r.category as recipeCategory FROM RECIPE as r, INGREDIENT as i WHERE r.recipeId=i.recipeId";
+		String query = "SELECT DISTINCT r.recipeId as recipeId, r.name as name,r.description as description, r.timePrep as TimePrep, r.timeCook as TimeCook, r.timeTotal as TimeTotal, r.category as category, r.rating as rating FROM RECIPE as r, INGREDIENT as i, Direction as d WHERE r.recipeId=i.recipeId and r.recipeId = d.recipeId";
 		int i;
 		
 		if(!descriptionText.isEmpty())
 			query = query + " AND (r.name LIKE '%"+descriptionText+"%')";
+		if(!comboTime.isEmpty())
+		{
+			if(comboTime.equals("less than 30 minutes"))
+			{
+				query = query + " AND ( r.timeTotal like '% 1 hr %')";
+			}
+			else if(comboTime.equals("between 30 and 60 minutes"))
+			{
+				query = query + " AND ( r.timeTotal not like '%hr%' and r.timeTotal not like '' and cast(substr(r.timeTotal,2,2) as integer) < 30)";
+			}
+			else if(comboTime.equals("more than 60 minutes"))
+			{
+				query = query + " AND ( timeTotal not like '%hr%' and timetotal not like '' and cast(substr(timeTotal,2,2) as integer) > 30 and cast(substr(timeTotal,2,2) as integer) < 60)";
+			}
+		}
+		
+		if(!comboStars.isEmpty())
+		{
+			if(comboStars.equals("1 star"))
+			{
+				query = query + " AND (cast(r.rating as decimal) >= 1)";
+			}
+			else if(comboStars.equals("2 stars"))
+			{
+				query = query + " AND (cast(r.rating as decimal) >= 2)";
+			}
+			else if(comboStars.equals("3 stars"))
+			{
+				query = query + " AND (cast(r.rating as decimal) >= 3)";
+			}
+			else if(comboStars.equals("4 stars"))
+			{
+				query = query + " AND (cast(r.rating as decimal) >= 4)";
+			}
+			else if(comboStars.equals("5 stars"))
+			{
+				query = query + " AND (cast(r.rating as decimal) = 5)";
+			}
+		}
+		
 		if(!incIngredients.isEmpty())
 		{
 			for(i=0;i<incIngredients.size();i++)

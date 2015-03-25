@@ -170,11 +170,15 @@ public class SearcherTest
 			{
 				this.bsview.setVisible(true);
 				this.window.add(this.bsview);
+				this.bscontroller.getRecipeResults().clear();
 				this.rsview.updateUI();
 				this.bsview.updateUI();
 			}
 			else if(selectedSearcher.equals("advanced"))
 			{
+				this.ascontroller.getRecipeResults().clear();
+				this.ascontroller.getIncIngredients().clear();
+				this.ascontroller.getRemIngredients().clear();
 				this.asview.setVisible(true);
 				this.window.add(this.asview);
 				this.rsview.updateUI();
@@ -187,6 +191,7 @@ public class SearcherTest
 				this.rsview.updateUI();
 				this.psview.updateUI();
 			}
+			this.rscontroller.getRecipeResults().clear();
 		}
 		//this.rscontroller.setRecipeResults(this.bscontroller.getRecipeResults());
 	}

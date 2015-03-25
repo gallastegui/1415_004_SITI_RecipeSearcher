@@ -4,14 +4,12 @@ public class IngredientFilter implements Filter
 {
 	private String ingredientName;
 	private String ingredientAmount;
-	private String ingredientUnit;
 	
 	
-	public IngredientFilter(String ingredientName, String ingredientAmount, String ingredientUnit)
+	public IngredientFilter(String ingredientName, String ingredientAmount)
 	{
 		this.ingredientName=ingredientName;
 		this.ingredientAmount = ingredientAmount;
-		this.ingredientUnit = ingredientUnit;
 	}
 
 	public String getIngredientName()
@@ -33,15 +31,4 @@ public class IngredientFilter implements Filter
 	{
 		this.ingredientAmount = ingredientAmount;
 	}
-
-	public String getIngredientUnit()
-	{
-		return ingredientUnit;
-	}
-
-	public void setIngredientUnit(String ingredientUnit)
-	{
-		this.ingredientUnit = ingredientUnit;
-	}
-
 }

@@ -60,13 +60,11 @@ public class AdvancedSearchView extends JPanel
 		this.model = new DefaultTableModel();
 		this.model.addColumn("Ingredient name");
 		this.model.addColumn("Total amount");
-		this.model.addColumn("Unit");
 		table = new JTable(model);
 		
 		this.model2 = new DefaultTableModel();
 		this.model2.addColumn("Ingredient name");
 		this.model2.addColumn("Total amount");
-		this.model2.addColumn("Unit");
 		table2 = new JTable(model2);
 		table2.setFillsViewportHeight(true);
 		

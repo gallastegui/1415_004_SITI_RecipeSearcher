@@ -64,6 +64,26 @@ public class AdvancedSearchController implements IController, ActionListener
 	{
 		this.recipeResults = recipeResults;
 	}
+	
+	public ArrayList<IngredientFilter> getIncIngredients()
+	{
+		return incIngredients;
+	}
+
+	public void setIncIngredients(ArrayList<IngredientFilter> incIngredients)
+	{
+		this.incIngredients = incIngredients;
+	}
+
+	public ArrayList<IngredientFilter> getRemIngredients()
+	{
+		return remIngredients;
+	}
+
+	public void setRemIngredients(ArrayList<IngredientFilter> remIngredients)
+	{
+		this.remIngredients = remIngredients;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e)
@@ -77,7 +97,7 @@ public class AdvancedSearchController implements IController, ActionListener
 		{
 			getDatIngredients();
 			System.out.println(sqlConn.buildAdvancedSearchQuery( incIngredients, remIngredients, descriptionText, comboTime, comboStars, comboCategory));
-			recipeResults = sqlConn.executeSearch(sqlConn.buildAdvancedSearchQuery( incIngredients, remIngredients, descriptionText, comboTime, comboStars, comboCategory));
+			recipeResults = sqlConn.executeAdvancedSearch(sqlConn.buildAdvancedSearchQuery( incIngredients, remIngredients, descriptionText, comboTime, comboStars, comboCategory));
 			this.jframe.setFlag(7);
 		}
 		else if(actionCommand.equals("plus"))
@@ -222,16 +242,7 @@ public class AdvancedSearchController implements IController, ActionListener
 			{
 				amount = "";
 			}
-			
-			try
-			{
-				unit = (String) ((Vector)this.view.getModel().getDataVector().elementAt(i)).elementAt(2);
-			}
-			catch(Exception e)
-			{
-				unit = "";
-			}
-				incIngredients.add(new IngredientFilter(name, amount, unit));
+				incIngredients.add(new IngredientFilter(name, amount));
 		}
 
 		numRows = this.view.getModel2().getRowCount();
@@ -239,9 +250,7 @@ public class AdvancedSearchController implements IController, ActionListener
 		{
 			name = (String) ((Vector)this.view.getModel2().getDataVector().elementAt(i)).elementAt(0);
 			amount = (String) ((Vector)this.view.getModel2().getDataVector().elementAt(i)).elementAt(1);
-			unit = (String) ((Vector)this.view.getModel2().getDataVector().elementAt(i)).elementAt(2);
-			remIngredients.add(new IngredientFilter(name, amount, unit));
+			remIngredients.add(new IngredientFilter(name, amount));
 		}
 	}
-
 }

@@ -3,5 +3,14 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="jars/sqlite-jdbc-3.5.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="jars/lucene-analyzers-3.6.2-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="jars/lucene-analyzers-3.6.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="jars/lucene-core-3.6.2-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="jars/lucene-core-3.6.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="jars/lucene-queryparser-3.6.2-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="jars/lucene-queryparser-3.6.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="jars/jsoup-1.8.1-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="jars/jsoup-1.8.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="jars/jsoup-1.8.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -15,7 +15,7 @@ public interface Index
     * @param outputIndexPath String ruta de la carpeta en la que almacenar el índice creado.
     * @param textParser TextParser parser de texto que procesará el texto de los documentos para su indexación.     
     */	
-	public void build(ResultSet rs, String outputIndexPath, TextParser textParser);
+	public void build(String connection, String outputIndexPath, TextParser textParser);
 	
 	public void load(String indexPath);
 	

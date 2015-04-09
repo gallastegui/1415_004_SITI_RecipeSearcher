@@ -33,6 +33,7 @@ import org.apache.lucene.util.Version;
 import org.tartarus.snowball.ext.PorterStemmer;
 
 import model.entity.Recipe;
+import model.index.LuceneRecipe;
 import model.index.parsing.TextParser;
 
 public class LuceneIndexer implements Index
@@ -117,9 +118,12 @@ public class LuceneIndexer implements Index
 				NumericField modifiedField = new NumericField("modified");
 				modifiedField.setLongValue(Calendar.getInstance().getTimeInMillis());
 				doc.add(modifiedField);
-				    
+
+				NumericField recipeId = new NumericField("recipeId");
+				int number = rs.getInt("recipeId");
+				recipeId.setLongValue(number);
 				/*add all the fields from the recipe*/
-				doc.add(new NumericField("recipeId", rs.getInt("recipeId")));
+				doc.add(recipeId);
 				doc.add(new Field("name", textParser.parse(rs.getString("name")), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 				doc.add(new Field("description", textParser.parse(rs.getString("description")), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 				doc.add(new Field("timePrep", textParser.parse(rs.getString("TimePrep")), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
@@ -161,7 +165,7 @@ public class LuceneIndexer implements Index
 			
 				while(rs2.next())
 				{
-					nutrient_aux = nutrient_aux + rs2.getInt("nutrientId") + ";" + textParser.parse(rs2.getString("name")) + ";" + rs2.getString("amount") + ";" + rs2.getString("percentage");
+					nutrient_aux = nutrient_aux + textParser.parse(rs2.getString("name")) + ";" + rs2.getString("amount") + ";" + rs2.getString("percentage");
 					doc.add(new Field("nutrient", nutrient_aux, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 					nutrient_aux = "";
 				}
@@ -181,6 +185,7 @@ public class LuceneIndexer implements Index
 				try
 				{
 					writer.addDocument(doc);
+					System.out.println("Indexado documento: "+doc.toString());
 				}
 				catch (Exception e)
 				{
@@ -227,15 +232,15 @@ public class LuceneIndexer implements Index
 	}
 
 	@Override
-	public Recipe getDocument(String documentId)
+	public LuceneRecipe getDocument(String documentId)
 	{
         Document d = null;
-        Recipe r = null;
+        LuceneRecipe r = null;
         try {
             /*Lucene returns the id associated with the document*/
             d = reader.document(Integer.parseInt(documentId));
             /*Create the recipe*/
-            r = new Recipe(Integer.parseInt(d.get("recipeId")), d.get("name"), d.get("description"), d.get("timePrep"), d.get("timeCook"), d.get("timeTotal"), d.get("category"), d.get("rating"));
+            r = new LuceneRecipe(Integer.parseInt(d.get("recipeId")), d.get("name"), d.get("description"), d.get("timePrep"), d.get("timeCook"), d.get("timeTotal"), d.get("category"), d.get("rating"), d.get("ingredient"), d.get("direction"), d.get("nutrient"), d.get("review"));
         } catch (Exception ex)
         {
             Logger.getLogger(LuceneIndexer.class.getName()).log(Level.SEVERE, null, ex);

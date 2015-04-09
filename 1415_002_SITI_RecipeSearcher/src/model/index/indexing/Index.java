@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.util.*;
 
 import model.entity.Recipe;
+import model.index.LuceneRecipe;
 import model.index.parsing.TextParser;
 
 public interface Index
@@ -21,7 +22,7 @@ public interface Index
 	
 	public List<String> getDocumentIds();
 	
-	public Recipe getDocument(String documentId);
+	public LuceneRecipe getDocument(String documentId);
 	
 	public List<String> getTerms();
 	

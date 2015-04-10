@@ -14,11 +14,16 @@ import java.util.*;
 import model.connector.SqlConnection;
 import model.entity.Recipe;
 import model.filtering.*;
+import model.index.ScoredRecipe;
+import model.index.indexing.LuceneIndexer;
+import model.index.searching.LuceneSearcher;
 
 public class BasicSearchController implements IController, ActionListener
 {
 	private String sql;
 	private SqlConnection sqlConn;
+	private LuceneIndexer indexer;
+	private LuceneSearcher searcher;
 	private BasicSearchView view;
 	String comboboxText;
 	private String descriptionText;
@@ -73,8 +78,6 @@ public class BasicSearchController implements IController, ActionListener
 		 }
 		 else if(actionCommand.equals("Search"))
 		 {
-			 String query = "";
-			 
 			 this.descriptionText = this.view.getTextField().getText();
 			 Object[] allSelectedAsArray = this.view.getComboBox().getSelectedObjects();
 			 
@@ -82,13 +85,43 @@ public class BasicSearchController implements IController, ActionListener
 			 {
 				 comboboxText = (String) o;
 			 }
-			 
-			 query = sqlConn.buildBasicSearchQuery(descriptionText, comboboxText);
-			 recipeResults = sqlConn.executeSearch(query);
+			 fillRecipes("SQLITE");
 			 this.jframe.setFlag(5);
 			//System.out.println(sqlConn.buildBasicSearchQuery(incIngredients, remIngredients, descriptionText));
 			//recipeResults = sqlConn.executeSearch(sqlConn.buildBasicSearchQuery(incIngredients, remIngredients, descriptionText));
 			//this.jframe.setFlag(1);
 		 }
+	}
+	
+	public void fillRecipes(String mode)
+	{
+		if(!mode.isEmpty())
+		{
+			if(mode.equals("SQLITE"))
+			{
+				String query = "";
+				query = sqlConn.buildBasicSearchQuery(descriptionText, comboboxText);
+				recipeResults = sqlConn.executeSearch(query);
+			}
+			else if(mode.equals("LUCENE"))
+			{
+				ArrayList<ScoredRecipe> scoredRecipes = new ArrayList<ScoredRecipe>();
+				
+				if(indexer == null)
+				{
+					indexer.load("resources\\index");
+				}
+				if(searcher.getSearcher() == null)
+				{
+					searcher.build(indexer);
+				}
+				scoredRecipes = (ArrayList<ScoredRecipe>) searcher.search(descriptionText);
+				
+				for(ScoredRecipe aux : scoredRecipes)
+				{
+					recipeResults.add(new Recipe(aux.getRecipeAsoc().getRecipeId(), aux.getRecipeAsoc().getName(), aux.getRecipeAsoc().getDescription(), aux.getRecipeAsoc().getTimePrep(), aux.getRecipeAsoc().getTimeCook(), aux.getRecipeAsoc().getTimeTotal(), aux.getRecipeAsoc().getCategory(), aux.getRecipeAsoc().getRating()));
+				}
+			}
+		}
 	}
 }

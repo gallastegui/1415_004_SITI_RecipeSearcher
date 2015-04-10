@@ -20,7 +20,12 @@ import model.index.indexing.LuceneIndexer;
 
 public class LuceneSearcher implements Searcher
 {
-	IndexSearcher searcher;
+	private IndexSearcher searcher;
+
+	public IndexSearcher getSearcher()
+	{
+		return searcher;
+	}
 
 	@Override
 	public void build(Index index)

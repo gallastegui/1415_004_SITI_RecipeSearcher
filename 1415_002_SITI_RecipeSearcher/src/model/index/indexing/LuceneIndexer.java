@@ -1,6 +1,8 @@
 package model.index.indexing;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -39,7 +41,7 @@ import model.index.parsing.TextParser;
 public class LuceneIndexer implements Index
 {
     /*
-    * IndexReader de la clase utilizado para leer del índice
+    * IndexReader de la clase utilizado para leer del ï¿½ndice
     */
     private IndexReader reader;
 
@@ -56,25 +58,25 @@ public class LuceneIndexer implements Index
 
 	@Override
 	public void build(String connection, String outputIndexPath, TextParser textParser)
-	{		
+	{
 		try 
 		{
+			/*1 create the directory and the necessary elements to build the index*/
 			Directory dir = new SimpleFSDirectory(new File(outputIndexPath));
-			
             Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_31);
             IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_31, analyzer);
             
-            /*Se crea índice*/
+            /*2 build the index*/
             iwc.setOpenMode(OpenMode.CREATE);
             
-            /*Se indexan documentos del directorio*/
+            /*call the function that indexes the documents in the index*/
             IndexWriter writer = new IndexWriter(dir, iwc);
             indexDocs(connection, writer, textParser);
             writer.close();
             
-            /*Se inicializa un reader para inspeccionar el índice*/
+            /*Inizialize the reader to inspect the indexÂ¿?*/
             reader = IndexReader.open(dir);
-		} 
+		}
 		catch (IOException e) 
 		{
 			System.out.println(" caught a " + e.getClass() + "\n with message: " + e.getMessage());
@@ -90,7 +92,15 @@ public class LuceneIndexer implements Index
 		Document doc;
 		String sql1 = "SELECT * from RECIPE", sql2 = "SELECT i.ingredientId, i.name, i.amount FROM RECIPE r left join INGREDIENT i ON r.recipeId=i.recipeId WHERE r.recipeId = ?", sql3 ="SELECT d.directionId, d.description FROM RECIPE r left join DIRECTION d ON r.recipeId = d.recipeId WHERE r.recipeId = ?", sql4 = "SELECT n.name, rel.amount, rel.percentage FROM NUTRITION n left join REL_RECIPE_NUTRITION rel ON n.nutritionId=rel.nutritionId left join RECIPE r ON r.recipeId = rel.recipeId where r.recipeId = ?", sql5 = "SELECT v.reviewId, v.author, v.description FROM RECIPE r left join REVIEW v ON r.recipeId = v.recipeId WHERE r.recipeId = ? ";
 		String ingredient_aux = "", direction_aux = "", nutrient_aux = "", review_aux = "";
-		
+		ArrayList<String> stopWords =  new ArrayList<String>();
+        File archivo = null;
+        FileReader fr = null;
+        BufferedReader br = null;
+        String line = null;
+        String[] terms = null;
+        int i;
+        
+		/*1 : Connect with database*/
 	    try
 	    {
 			Class.forName("org.sqlite.JDBC");
@@ -103,87 +113,180 @@ public class LuceneIndexer implements Index
 	    	return;
 		}
 	    
+	    /*2: Obtain the stopwords*/
+        try
+        {
+            stopWords = new ArrayList<String>();
+            archivo = new File ("resources/stop-words.txt");
+            fr = new FileReader (archivo);
+            br = new BufferedReader(fr);
+            
+            while((line=br.readLine())!=null)
+            {
+                stopWords.add(line);
+            } 
+        }
+        catch(Exception e){}
+        finally
+        {
+            try 
+            {
+                fr.close();
+                br.close();
+            }
+            catch (IOException ex)
+            {
+                Logger.getLogger(LuceneIndexer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        line = "";
+        /*3: Obtain the recipes*/
 		try
 		{
-			/*Obtain the recipes*/
 			stmt = connector.prepareStatement(sql1);
 			stmt.setFetchSize(1000);
 			rs = stmt.executeQuery();
 
 			while (rs.next())
 			{
+				/*3.1 create the document*/
 				doc = new Document();
 	
-				/* Add the last modified date of the file a field named "modified".*/
+				/*3.2 Add the last modified date in the document*/
 				NumericField modifiedField = new NumericField("modified");
 				modifiedField.setLongValue(Calendar.getInstance().getTimeInMillis());
 				doc.add(modifiedField);
-
+				
+				/*3.3 add the id of the recipe in the document*/
 				NumericField recipeId = new NumericField("recipeId");
 				int number = rs.getInt("recipeId");
 				recipeId.setLongValue(number);
-				/*add all the fields from the recipe*/
 				doc.add(recipeId);
-				doc.add(new Field("name", textParser.parse(rs.getString("name")), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-				doc.add(new Field("description", textParser.parse(rs.getString("description")), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-				doc.add(new Field("timePrep", textParser.parse(rs.getString("TimePrep")), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-				doc.add(new Field("timeCook", textParser.parse(rs.getString("TimeCook")), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-				doc.add(new Field("timeTotal",textParser.parse(rs.getString("TimeTotal")), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-				doc.add(new Field("Category", textParser.parse(rs.getString("Category")), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-				doc.add(new Field("Rating", textParser.parse(rs.getString("Rating")), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 				
-				/*Obtain the Ingredients*/
+				/*3.4.1 remove the stopwords from the name*/
+				line = rs.getString("name");
+				terms = line.split(" ");
+				line = "";
+	            for(i = 0;i < terms.length;i++)
+	            {
+	            	if(!stopWords.contains(terms[i]))
+	            	{
+	            		line = line + terms[i];
+	            	}
+	            }
+				/*3.4.2 add the name in the document*/
+				doc.add(new Field("name", line, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+
+				/*3.5.1 remove the stopwords from the description*/
+				line = rs.getString("description");
+				terms = line.split(" ");
+				line = "";
+	            for(i = 0;i < terms.length;i++)
+	            {
+	            	if(!stopWords.contains(terms[i]))
+	            	{
+	            		line = line + terms[i];
+	            	}
+	            }
+	            /*3.5.2 add the description in the document*/
+				doc.add(new Field("description", line, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+				/*3.6 add the rest of the fields in the document*/
+				doc.add(new Field("timePrep", rs.getString("TimePrep"), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+				doc.add(new Field("timeCook", rs.getString("TimeCook"), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+				doc.add(new Field("timeTotal",rs.getString("TimeTotal"), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+				doc.add(new Field("Category", rs.getString("Category"), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+				doc.add(new Field("Rating", rs.getString("Rating"), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+				
+				/*3.7.1 Obtain the Ingredients*/
 				stmt2 = connector.prepareStatement(sql2);
 				stmt2.setFetchSize(1000);
 				stmt2.setInt(1, rs.getInt("recipeId"));
 				
 				rs2 = stmt2.executeQuery();
-				
+				/*3.7.2 for each ingredient, remove the stopwords and then add in the document*/
 				while(rs2.next())
 				{
-					ingredient_aux = ingredient_aux + rs2.getInt("ingredientId") + ";" + textParser.parse(rs2.getString("name")) + ";" + rs2.getString("amount");
+					ingredient_aux = ingredient_aux + rs2.getInt("ingredientId") + ";" + rs2.getString("name") + ";" + rs2.getString("amount");
+					ingredient_aux = rs.getString("description");
+					terms = ingredient_aux.split(" ");
+					ingredient_aux = "";
+		            for(i = 0;i < terms.length;i++)
+		            {
+		            	if(!stopWords.contains(terms[i]))
+		            	{
+		            		ingredient_aux = ingredient_aux + terms[i];
+		            	}
+		            }
 					doc.add(new Field("ingredient", ingredient_aux, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 					ingredient_aux = "";
 				}
 				
+				/*3.8.1 Obtain the directions*/
 				stmt2 = connector.prepareStatement(sql3);
 				stmt2.setFetchSize(1000);
 				stmt2.setInt(1, rs.getInt("recipeId"));
 				rs2 = stmt2.executeQuery();
 				
+				/*3.8.2 for each direction, remove the stopwords and then add in the document*/
 				while(rs2.next())
 				{
-					direction_aux = direction_aux + rs2.getInt("directionId") + ";" + textParser.parse(rs2.getString("description"));
+					direction_aux = direction_aux + rs2.getInt("directionId") + ";" + rs2.getString("description");
+					/*remove the stopwords from the direction*/
+					direction_aux = rs.getString("description");
+					terms = direction_aux.split(" ");
+					direction_aux = "";
+		            for(i = 0;i < terms.length;i++)
+		            {
+		            	if(!stopWords.contains(terms[i]))
+		            	{
+		            		direction_aux = direction_aux + terms[i];
+		            	}
+		            }
 					doc.add(new Field("direction", direction_aux, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 					direction_aux = "";
 				}
 				
+				/*3.8.1 Obtain the nutrients*/
 				stmt2 = connector.prepareStatement(sql4);
 				stmt2.setFetchSize(1000);
 				stmt2.setInt(1, rs.getInt("recipeId"));
 				rs2 = stmt2.executeQuery();	
-			
+				/*3.8.2 for each nutrient, add in the document*/
 				while(rs2.next())
 				{
-					nutrient_aux = nutrient_aux + textParser.parse(rs2.getString("name")) + ";" + rs2.getString("amount") + ";" + rs2.getString("percentage");
+					nutrient_aux = nutrient_aux + rs2.getString("name") + ";" + rs2.getString("amount") + ";" + rs2.getString("percentage");
 					doc.add(new Field("nutrient", nutrient_aux, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 					nutrient_aux = "";
 				}
 				
+				/*3.8.1 Obtain the reviews*/
 				stmt2 = connector.prepareStatement(sql5);
 				stmt2.setFetchSize(1000);
 				stmt2.setInt(1, rs.getInt("recipeId"));
 				rs2 = stmt2.executeQuery();		
 				
+				/*3.8.2 for each review, remove the stopwords and then add in the document*/
 				while(rs2.next())
 				{
-					review_aux = review_aux + rs2.getInt("reviewId") + ";" + textParser.parse(rs2.getString("author")) + textParser.parse(rs2.getString("description"));
+					review_aux = review_aux + rs2.getInt("reviewId") + ";" + rs2.getString("author") + rs2.getString("description");
+					/*remove the stopwords from the review*/
+					review_aux = rs.getString("description");
+					terms = review_aux.split(" ");
+					review_aux = "";
+		            for(i = 0;i < terms.length;i++)
+		            {
+		            	if(!stopWords.contains(terms[i]))
+		            	{
+		            		review_aux = review_aux + terms[i];
+		            	}
+		            }
 					doc.add(new Field("review", review_aux, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 					review_aux = "";
 				}
 				
 				try
 				{
+					/*3.9 try to write the document in the index*/
 					writer.addDocument(doc);
 					System.out.println("Indexado documento: "+doc.toString());
 				}
@@ -202,6 +305,7 @@ public class LuceneIndexer implements Index
 	@Override
 	public void load(String indexPath)
 	{
+		/*try to get the index in the memory ram*/
         try
         {
             reader = IndexReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath))));
@@ -424,7 +528,7 @@ public class LuceneIndexer implements Index
             catch (IOException ex)
             {
                 Logger.getLogger(LuceneIndexer.class.getName()).log(Level.SEVERE, null, ex);
-            }            
+            }           
         }
         return post;
 	}

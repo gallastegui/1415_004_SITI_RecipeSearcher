@@ -30,29 +30,29 @@ public class LuceneSearcher implements Searcher
 	@Override
 	public void build(Index index)
 	{
-        //read the index (created in LuceneIndexer)
+        /*1 read the index (created in LuceneIndexer)*/
         IndexReader reader=((LuceneIndexer)index).getReader();
-        //Create the searcher
+        /*2 Create the searcher*/
         searcher = new IndexSearcher(reader);	
 	}
 
 	@Override
 	public List<ScoredRecipe> search(String query)
 	{
-        
        List<ScoredRecipe> sct = null;
         
        try{
+    	   /*1 create the necessary elements for retrieve the recipes*/
            Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_31);
            QueryParser parser = new QueryParser(Version.LUCENE_31, "contents", analyzer);
-
+           /*2 parse the query*/
            Query query_parsed = parser.parse(query);
            System.out.println("Searching for: " + query_parsed.toString("contents"));
             
-           //return the list of the recipe's that answer the query
-           //order by descendent score
+           /*3 return the list of the recipe's that answer the query order by descendent score*/
            sct =  scoreDocs(searcher, query_parsed);
-
+           
+           /*close the searcher*/
            searcher.close();
        }catch(Exception e)
        {
@@ -65,13 +65,14 @@ public class LuceneSearcher implements Searcher
     public List<ScoredRecipe> scoreDocs(IndexSearcher searcher, Query query)
     {
         List<ScoredRecipe> sct = new ArrayList<ScoredRecipe>();
-         
-        //Método search del searcher (que no tiene nada que ver con el de LuceneSearcher)
-        //query a buscar, número de resultados a obtener
+
         TopDocs results = null;
-        try {
+        try
+        {
+        	/*use the function search of lucene to search*/
             results = searcher.search(query, 50);
-        } catch (IOException ex) {
+        } catch (IOException ex)
+        {
             Logger.getLogger(LuceneSearcher.class.getName()).log(Level.SEVERE, null, ex);
         }
         ScoreDoc[] score = results.scoreDocs;    
@@ -80,8 +81,6 @@ public class LuceneSearcher implements Searcher
         {
             try
             {
-                //ScoredTextDocument: TextDocument docAsoc, double scoreDoc
-                //TextDocument: String id, String path
                 sct.add(new ScoredRecipe(new LuceneRecipe(Integer.parseInt(searcher.doc(aux.doc).get("recipeId")), searcher.doc(aux.doc).get("name"), searcher.doc(aux.doc).get("description"), searcher.doc(aux.doc).get("timePrep"), searcher.doc(aux.doc).get("timeCook"), searcher.doc(aux.doc).get("timeTotal"), searcher.doc(aux.doc).get("category"), searcher.doc(aux.doc).get("rating"), searcher.doc(aux.doc).get("ingredient"), searcher.doc(aux.doc).get("direction"), searcher.doc(aux.doc).get("nutrient"), searcher.doc(aux.doc).get("review")),aux.score));
             } catch (CorruptIndexException ex)
             {
@@ -105,5 +104,4 @@ public class LuceneSearcher implements Searcher
  
         return sct;
     }
-
 }

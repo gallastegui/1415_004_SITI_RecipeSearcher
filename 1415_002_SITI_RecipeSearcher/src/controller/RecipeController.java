@@ -16,7 +16,7 @@ public class RecipeController implements IController,ActionListener
 	
 	public RecipeController()
 	{
-		sqlConn = new SqlConnection("C:\\Users\\eps\\allrecipesv1.db");
+		sqlConn = new SqlConnection("resources\\allrecipesv1.db");
 	}
 	
 	@Override

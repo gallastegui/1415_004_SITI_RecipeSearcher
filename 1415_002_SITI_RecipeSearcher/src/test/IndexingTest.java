@@ -12,6 +12,6 @@ public class IndexingTest
         HtmlSimpleParser parser = new HtmlSimpleParser();
  
             //Se inicia creación del índice
-            li.build("C:\\Users\\g.gallastegui\\db\\allrecipesv1.db", "resources\\index", parser);
+            li.build("resources\\allrecipesv1.db", "resources\\index", parser);
     }
 }

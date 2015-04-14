@@ -7,8 +7,10 @@ import java.util.logging.Logger;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.util.Version;
@@ -40,14 +42,16 @@ public class LuceneSearcher implements Searcher
 	public List<ScoredRecipe> search(String query)
 	{
        List<ScoredRecipe> sct = null;
+       String[] fields = {"name","description","timePrep","timeCook","timeTotal","category","ingredient","review","nutrient","direction"};
         
        try{
     	   /*1 create the necessary elements for retrieve the recipes*/
            Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_31);
-           QueryParser parser = new QueryParser(Version.LUCENE_31, "contents", analyzer);
+           //QueryParser parser = new QueryParser(Version.LUCENE_31, "description", analyzer);
+           MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_31, fields, analyzer);
            /*2 parse the query*/
            Query query_parsed = parser.parse(query);
-           System.out.println("Searching for: " + query_parsed.toString("contents"));
+           System.out.println("Searching for: " + query_parsed.toString("description"));
             
            /*3 return the list of the recipe's that answer the query order by descendent score*/
            sct =  scoreDocs(searcher, query_parsed);
@@ -81,6 +85,9 @@ public class LuceneSearcher implements Searcher
         {
             try
             {
+            	Document d = searcher.doc(aux.doc);
+            	String number = d.getFieldable("recipeId").stringValue();
+            	
                 sct.add(new ScoredRecipe(new LuceneRecipe(Integer.parseInt(searcher.doc(aux.doc).get("recipeId")), searcher.doc(aux.doc).get("name"), searcher.doc(aux.doc).get("description"), searcher.doc(aux.doc).get("timePrep"), searcher.doc(aux.doc).get("timeCook"), searcher.doc(aux.doc).get("timeTotal"), searcher.doc(aux.doc).get("category"), searcher.doc(aux.doc).get("rating"), searcher.doc(aux.doc).get("ingredient"), searcher.doc(aux.doc).get("direction"), searcher.doc(aux.doc).get("nutrient"), searcher.doc(aux.doc).get("review")),aux.score));
             } catch (CorruptIndexException ex)
             {

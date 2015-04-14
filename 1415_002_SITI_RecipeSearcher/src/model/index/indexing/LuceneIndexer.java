@@ -98,7 +98,7 @@ public class LuceneIndexer implements Index
         BufferedReader br = null;
         String line = null;
         String[] terms = null;
-        int i;
+        int i, number;
         
 		/*1 : Connect with database*/
 	    try
@@ -158,10 +158,7 @@ public class LuceneIndexer implements Index
 				doc.add(modifiedField);
 				
 				/*3.3 add the id of the recipe in the document*/
-				NumericField recipeId = new NumericField("recipeId");
-				int number = rs.getInt("recipeId");
-				recipeId.setLongValue(number);
-				doc.add(recipeId);
+				doc.add(new Field("recipeId", String.valueOf(rs.getInt("recipeId")), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 				
 				/*3.4.1 remove the stopwords from the name*/
 				line = rs.getString("name");
@@ -283,12 +280,11 @@ public class LuceneIndexer implements Index
 					doc.add(new Field("review", review_aux, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 					review_aux = "";
 				}
-				
 				try
 				{
 					/*3.9 try to write the document in the index*/
 					writer.addDocument(doc);
-					System.out.println("Indexado documento: "+doc.toString());
+					System.out.println("Indexada receta con id "+rs.getInt("recipeId"));
 				}
 				catch (Exception e)
 				{

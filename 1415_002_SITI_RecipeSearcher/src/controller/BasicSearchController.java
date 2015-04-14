@@ -32,7 +32,7 @@ public class BasicSearchController implements IController, ActionListener
 
 	public BasicSearchController()
 	{
-		sqlConn = new SqlConnection("C:\\Users\\eps\\allrecipesv1.db");
+		sqlConn = new SqlConnection("resources\\allrecipesv1.db");
 	}
 	
 	public void setJframe(SearcherTest jframe)
@@ -95,11 +95,14 @@ public class BasicSearchController implements IController, ActionListener
 	
 	public void fillRecipes(String mode)
 	{
+		String query = "";
+		
 		if(!mode.isEmpty())
 		{
 			if(mode.equals("SQLITE"))
 			{
-				String query = "";
+				if(sqlConn == null)
+					sqlConn = new SqlConnection("resources\\allrecipesv1.db");
 				query = sqlConn.buildBasicSearchQuery(descriptionText, comboboxText);
 				recipeResults = sqlConn.executeSearch(query);
 			}
@@ -109,17 +112,27 @@ public class BasicSearchController implements IController, ActionListener
 				
 				if(indexer == null)
 				{
+					indexer = new LuceneIndexer();
 					indexer.load("resources\\index");
 				}
-				if(searcher.getSearcher() == null)
+				if(searcher == null)
 				{
-					searcher.build(indexer);
+					searcher = new LuceneSearcher();
+					if(searcher.getSearcher() == null)
+					{
+						searcher.build(indexer);
+					}
 				}
 				scoredRecipes = (ArrayList<ScoredRecipe>) searcher.search(descriptionText);
-				
-				for(ScoredRecipe aux : scoredRecipes)
+				if(!scoredRecipes.isEmpty())
 				{
-					recipeResults.add(new Recipe(aux.getRecipeAsoc().getRecipeId(), aux.getRecipeAsoc().getName(), aux.getRecipeAsoc().getDescription(), aux.getRecipeAsoc().getTimePrep(), aux.getRecipeAsoc().getTimeCook(), aux.getRecipeAsoc().getTimeTotal(), aux.getRecipeAsoc().getCategory(), aux.getRecipeAsoc().getRating()));
+					
+					query = query + "SELECT * FROM RECIPE WHERE recipeId = "+ scoredRecipes.get(0).getRecipeAsoc().getRecipeId();
+					for(ScoredRecipe aux : scoredRecipes)
+					{
+						query = query + "OR recipeId = "+aux.getRecipeAsoc().getRecipeId();
+					}
+					recipeResults = sqlConn.executeSearch(query);
 				}
 			}
 		}

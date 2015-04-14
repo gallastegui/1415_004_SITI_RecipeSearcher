@@ -30,7 +30,7 @@ public class AdvancedSearchController implements IController, ActionListener
 
 	public AdvancedSearchController()
 	{
-		sqlConn = new SqlConnection("C:\\Users\\eps\\allrecipesv1.db");
+		sqlConn = new SqlConnection("resources\\allrecipesv1.db");
 		incIngredients = new ArrayList<IngredientFilter>();
 		remIngredients = new ArrayList<IngredientFilter>();
 	}

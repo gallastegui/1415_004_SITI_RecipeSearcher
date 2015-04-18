@@ -10,21 +10,36 @@ public class SqlConnection
 	private Connection connector = null;
 	private final String dbName;
 	
+    /**
+    * Constructor class    
+    */
 	public SqlConnection(String dbName)
 	{
 		this.dbName=dbName;
 	}
 	
+    /**
+    * Getter
+    * @returns the associated connector of the controller
+    */
 	public Connection getConnector()
 	{
 		return connector;
 	}
 
+    /**
+    * Setter
+    * @params connector the connector to associate to the controller
+    */
 	public void setConnector(Connection connector)
 	{
 		this.connector = connector;
 	}
 	
+	/**
+	 * connects with the database
+	 * @return true if gets a successful connection, false otherwise
+	 */
 	public boolean connectDatabase()
 	{
 		if(dbName == null)
@@ -43,6 +58,10 @@ public class SqlConnection
 		return true;
 	}
 	
+	/**
+	 * 
+	 * @return true if gets a successful disconnection, false otherwise
+	 */
 	public boolean disconnectDatabase()
 	{
 		if(dbName == null)
@@ -59,6 +78,11 @@ public class SqlConnection
 		return true;
 	}
 	
+	/**
+	 * execute the query and retrieve the recipes from the database
+	 * @param sql query to execute
+	 * @return list of the recipe results to show in the view
+	 */
 	public ArrayList<Recipe> executeSearch(String sql)
 	{
 		Statement stmt = null;
@@ -67,18 +91,22 @@ public class SqlConnection
 		
 		if(sql == null)
 			return null;
-		
+		/*get the connection first*/
 		if(connector == null)
 			connectDatabase();
 		
 		try
 		{
+			/*create the statement*/
 			stmt = connector.createStatement();
+			/*execute the query*/
 			rs = stmt.executeQuery(sql);
+			/*get the results*/
 			while (rs.next())
 			{
 				recipes.add(new Recipe(rs.getInt("recipeId"), rs.getString("name"), rs.getString("description"), rs.getString("TimePrep"), rs.getString("TimeCook"), rs.getString("TimeTotal"),rs.getString("Category"), rs.getString("Rating")));
 			}
+			/*close connections*/
 			rs.close();
 		    stmt.close();
 		    return recipes;
@@ -88,7 +116,11 @@ public class SqlConnection
 			return null;
 		}
 	}
-	
+	/**
+	 * method that use preparedstatements to consult the database, and retrieve the recipes 
+	 * @param prepared necessary information to build the query
+	 * @return the recipe list of the search
+	 */
 	public ArrayList<Recipe> executeAdvancedSearch(ArrayList<String> prepared)
 	{
 		PreparedStatement stmt = null;
@@ -98,7 +130,7 @@ public class SqlConnection
 		
 		if(prepared.isEmpty())
 			return recipes;
-		
+		/*get the query placed in the last position of the array*/
 		sql = prepared.get(prepared.size()-1);
 		
 		if(sql == null)
@@ -109,14 +141,19 @@ public class SqlConnection
 		
 		try
 		{
+			/*create the statement with the query*/
 			stmt = connector.prepareStatement(sql);
 			stmt.setFetchSize(1000);
+			/*fill the parameters of the query*/
 			for(int i=0;i<prepared.size()-1;i++)
 			{
 				stmt.setString(i+1, prepared.get(i));
 			}
 			
+			/*execute the query*/
 			rs = stmt.executeQuery();
+			
+			/*create the recipe list to return*/
 			while (rs.next())
 			{
 				recipes.add(new Recipe(rs.getInt("recipeId"), rs.getString("name"), rs.getString("description"), rs.getString("TimePrep"), rs.getString("TimeCook"), rs.getString("TimeTotal"),rs.getString("Category"), rs.getString("Rating")));
@@ -131,6 +168,11 @@ public class SqlConnection
 		}
 	}
 	
+	/**
+	 * method that retrieves the ingredients from the database
+	 * @param sql query to execute
+	 * @return list of ingredients found
+	 */
 	public ArrayList<Ingredient> executeIngredientSearch(String sql)
 	{
 		Statement stmt = null;
@@ -145,8 +187,11 @@ public class SqlConnection
 		
 		try
 		{
+			/*create the statement*/
 			stmt = connector.createStatement();
+			/*execute the query*/
 			rs = stmt.executeQuery(sql);
+			/*create the list of ingredients to return*/
 			while (rs.next())
 			{
 				ings.add(new Ingredient(rs.getInt("ingredientId"), rs.getString("name"), rs.getString("amount")));
@@ -154,13 +199,19 @@ public class SqlConnection
 			rs.close();
 		    stmt.close();
 		    return ings;
-		} catch (SQLException e)
+		}
+		catch (SQLException e)
 		{
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			return null;
 		}		
 	}
 	
+	/**
+	 * method that retrieves the nutrients from the database
+	 * @param sql query to execute
+	 * @return list of nutrients found
+	 */
 	public ArrayList<Nutrient> executeNutrientSearch(String sql)
 	{
 		Statement stmt = null;
@@ -175,8 +226,11 @@ public class SqlConnection
 		
 		try
 		{
+			/*create the statement*/
 			stmt = connector.createStatement();
+			/*execute the query*/
 			rs = stmt.executeQuery(sql);
+			/*create the list of nutrients to return*/
 			while (rs.next())
 			{
 				nut.add(new Nutrient(rs.getInt("nutritionId"), rs.getString("name"), rs.getString("amount"), rs.getString("percentage")));
@@ -184,13 +238,19 @@ public class SqlConnection
 			rs.close();
 		    stmt.close();
 		    return nut;
-		} catch (SQLException e)
+		}
+		catch (SQLException e)
 		{
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			return null;
 		}		
 	}
 	
+	/**
+	 * method that retrieves the directions from the database
+	 * @param sql query to execute
+	 * @return list of directions found
+	 */
 	public ArrayList<Direction> executeDirectionSearch(String sql)
 	{
 		Statement stmt = null;
@@ -205,8 +265,11 @@ public class SqlConnection
 		
 		try
 		{
+			/*create the statement*/
 			stmt = connector.createStatement();
+			/*execute the query*/
 			rs = stmt.executeQuery(sql);
+			/*create the list of directions to return*/
 			while (rs.next())
 			{
 				dir.add(new Direction(rs.getInt("directionId"), rs.getString("description")));
@@ -218,9 +281,13 @@ public class SqlConnection
 		{
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			return null;
-		}		
+		}
 	}
 	
+	/**
+	 * create the basic query
+	 * @return String the query searching with the recipe name and category
+	 */
 	public String buildBasicSearchQuery(String name, String category)
 	{
 		String query = "";
@@ -241,6 +308,16 @@ public class SqlConnection
 		return query;
 	}
 	
+	/**
+	 * create the advances search query.
+	 * @param incIngredients ingredients that appear in the recipe.
+	 * @param remIngredients ingredients that don't appear in the plate.
+	 * @param descriptionText text to search in the recipe name.
+	 * @param comboTime
+	 * @param comboStars
+	 * @param comboCategory
+	 * @return prepared information for construct the query
+	 */
 	public ArrayList<String> buildAdvancedSearchQuery(ArrayList<IngredientFilter> incIngredients, ArrayList<IngredientFilter> remIngredients, String descriptionText, String comboTime, String comboStars, String comboCategory)
 	{
 		ArrayList<String> rowsPrepared = new ArrayList<String>();
@@ -467,6 +544,7 @@ public class SqlConnection
 		
 		return query;
 	}*/
+	
 	public String buildRecipeDirectionsQuery(int recipeId)
 	{
 		return "SELECT d.directionId, d.description FROM RECIPE r left JOIN DIRECTION d ON r.recipeID = d.recipeId where r.recipeId = "+recipeId+" order by directionId";

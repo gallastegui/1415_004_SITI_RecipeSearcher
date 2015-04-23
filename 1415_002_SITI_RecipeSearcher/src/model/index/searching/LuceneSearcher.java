@@ -15,6 +15,7 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.util.Version;
 
+import controller.Preferences;
 import model.index.LuceneRecipe;
 import model.index.ScoredRecipe;
 import model.index.indexing.Index;
@@ -74,7 +75,7 @@ public class LuceneSearcher implements Searcher
         try
         {
         	/*use the function search of lucene to search*/
-            results = searcher.search(query, 50);
+            results = searcher.search(query, Preferences.TotalRecipes);
         } catch (IOException ex)
         {
             Logger.getLogger(LuceneSearcher.class.getName()).log(Level.SEVERE, null, ex);

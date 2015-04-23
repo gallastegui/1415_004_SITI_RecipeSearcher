@@ -36,7 +36,7 @@ public class BasicSearchController implements IController, ActionListener
     */
 	public BasicSearchController()
 	{
-		sqlConn = new SqlConnection("resources\\allrecipesv1.db");
+		sqlConn = new SqlConnection(Preferences.pathDatabase);
 	}
 	
     /**
@@ -121,7 +121,7 @@ public class BasicSearchController implements IController, ActionListener
 				 comboboxText = (String) o;
 			 }
 			 /*get the recipe list using SQLITE or LUCENE*/
-			 fillRecipes("SQLITE");
+			 fillRecipes(Preferences.searchType);
 			 /*change to the recipe list view*/
 			 this.jframe.setFlag(5);
 		 }
@@ -130,56 +130,53 @@ public class BasicSearchController implements IController, ActionListener
 	 * Get the recipe List result
 	 * @param mode method to use when searching the recipes
 	 */
-	public void fillRecipes(String mode)
+	public void fillRecipes(Preferences.typeOfSearch mode)
 	{
 		String query = "";
 		
-		if(!mode.isEmpty())
+		/* Search the recipes using the database*/
+		if(mode.equals(Preferences.typeOfSearch.SQLITE))
 		{
-			/* Search the recipes using the database*/
-			if(mode.equals("SQLITE"))
+			/*get the connection if still not connected*/
+			if(sqlConn == null)
+				sqlConn = new SqlConnection(Preferences.pathDatabase);
+			/*build the query to use in the search*/
+			query = sqlConn.buildBasicSearchQuery(descriptionText, comboboxText);
+			/*Get the recipe list*/
+			recipeResults = sqlConn.executeSearch(query);
+		}
+		/*Search the recipes using the index*/
+		else if(mode.equals(Preferences.typeOfSearch.LUCENE))
+		{
+			ArrayList<ScoredRecipe> scoredRecipes = new ArrayList<ScoredRecipe>();
+			/*load the index only if it was not already loaded*/
+			if(indexer == null)
 			{
-				/*get the connection if still not connected*/
-				if(sqlConn == null)
-					sqlConn = new SqlConnection("resources\\allrecipesv1.db");
-				/*build the query to use in the search*/
-				query = sqlConn.buildBasicSearchQuery(descriptionText, comboboxText);
-				/*Get the recipe list*/
-				recipeResults = sqlConn.executeSearch(query);
+				indexer = new LuceneIndexer();
+				indexer.load(Preferences.pathIndex);
 			}
-			/*Search the recipes using the index*/
-			else if(mode.equals("LUCENE"))
+			/*build the searcher*/
+			if(searcher == null)
 			{
-				ArrayList<ScoredRecipe> scoredRecipes = new ArrayList<ScoredRecipe>();
-				/*load the index only if it was not already loaded*/
-				if(indexer == null)
+				searcher = new LuceneSearcher();
+				if(searcher.getSearcher() == null)
 				{
-					indexer = new LuceneIndexer();
-					indexer.load("resources\\index");
+					/*search in the index*/
+					searcher.build(indexer);
 				}
-				/*build the searcher*/
-				if(searcher == null)
+			}
+			/*we cannot directly display the information recovered by the index, because of the StopWords analyzer,
+			 *  so we take the recipes from the database looking for the ID obtained from the index*/
+			scoredRecipes = (ArrayList<ScoredRecipe>) searcher.search(descriptionText);
+			if(!scoredRecipes.isEmpty())
+			{
+				
+				query = query + "SELECT * FROM RECIPE WHERE recipeId = "+ scoredRecipes.get(0).getRecipeAsoc().getRecipeId();
+				for(ScoredRecipe aux : scoredRecipes)
 				{
-					searcher = new LuceneSearcher();
-					if(searcher.getSearcher() == null)
-					{
-						/*search in the index*/
-						searcher.build(indexer);
-					}
+					query = query + " OR recipeId = "+aux.getRecipeAsoc().getRecipeId();
 				}
-				/*we cannot directly display the information recovered by the index, because of the StopWords analyzer,
-				 *  so we take the recipes from the database looking for the ID obtained from the index*/
-				scoredRecipes = (ArrayList<ScoredRecipe>) searcher.search(descriptionText);
-				if(!scoredRecipes.isEmpty())
-				{
-					
-					query = query + "SELECT * FROM RECIPE WHERE recipeId = "+ scoredRecipes.get(0).getRecipeAsoc().getRecipeId();
-					for(ScoredRecipe aux : scoredRecipes)
-					{
-						query = query + "OR recipeId = "+aux.getRecipeAsoc().getRecipeId();
-					}
-					recipeResults = sqlConn.executeSearch(query);
-				}
+				recipeResults = sqlConn.executeSearch(query);
 			}
 		}
 	}

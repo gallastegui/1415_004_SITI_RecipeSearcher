@@ -19,7 +19,7 @@ public class RecipeController implements IController,ActionListener
     */
 	public RecipeController()
 	{
-		sqlConn = new SqlConnection("resources\\allrecipesv1.db");
+		sqlConn = new SqlConnection(Preferences.pathDatabase);
 	}
 	
 	/**

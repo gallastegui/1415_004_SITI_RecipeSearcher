@@ -7,6 +7,7 @@ import controller.AdvancedSearchController;
 import controller.BasicSearchController;
 import controller.DefaultController;
 import controller.PredefinedSearchController;
+import controller.Preferences;
 import controller.RecipeController;
 import controller.ResultsController;
 import view.AdvancedSearchView;
@@ -34,6 +35,7 @@ public class SearcherTest
 	private RecipeController rpcontroller;
 	private RecipeView rpview;
 	private String selectedSearcher;
+
 
 	public SearcherTest()
 	{
@@ -217,7 +219,7 @@ public class SearcherTest
 	public static void main(String args[])
 	{
 		SearcherTest program = new SearcherTest();
-		
+
 		program.bscontroller = new BasicSearchController();
 		program.bsview = new BasicSearchView(program.bscontroller);
 		

@@ -1,5 +1,6 @@
 package test;
 
+import controller.Preferences;
 import model.index.indexing.LuceneIndexer;
 import model.index.parsing.HtmlSimpleParser;
 
@@ -12,6 +13,6 @@ public class IndexingTest
         HtmlSimpleParser parser = new HtmlSimpleParser();
  
             //Se inicia creación del índice
-            li.build("resources\\allrecipesv1.db", "resources\\index", parser);
+            li.build(Preferences.pathDatabase, Preferences.pathIndex, parser);
     }
 }

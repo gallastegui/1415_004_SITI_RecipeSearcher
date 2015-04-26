@@ -14,7 +14,6 @@ import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
 import model.entity.Recipe;
-import model.filtering.IngredientFilter;
 import test.SearcherTest;
 import view.ResultsView;
 

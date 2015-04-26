@@ -13,6 +13,12 @@ public class Ingredient
 		this.amount = amount;
 	}
 	
+	public Ingredient(String name2, String amount2)
+	{
+		this.name = name2;
+		this.amount = amount2;
+	}
+
 	public Integer getIngredientId()
 	{
 		return ingredientId;

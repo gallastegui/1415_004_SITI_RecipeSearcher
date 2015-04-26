@@ -13,7 +13,6 @@ import java.util.*;
 
 import model.connector.SqlConnection;
 import model.entity.Recipe;
-import model.filtering.*;
 import model.index.ScoredRecipe;
 import model.index.indexing.LuceneIndexer;
 import model.index.searching.LuceneSearcher;
@@ -179,5 +178,17 @@ public class BasicSearchController implements IController, ActionListener
 				recipeResults = sqlConn.executeSearch(query);
 			}
 		}
+	}
+
+	public void setCategories()
+	{
+		String[] results = null;
+		/*get the connection if still not connected*/
+		if(sqlConn == null)
+			sqlConn = new SqlConnection(Preferences.pathDatabase);
+		/*build the query to use in the search*/
+		results = sqlConn.getCategories().split(";");
+		
+		view.setLabels5(results);
 	}
 }

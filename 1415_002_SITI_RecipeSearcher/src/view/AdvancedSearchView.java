@@ -35,7 +35,7 @@ public class AdvancedSearchView extends JPanel
 	final String labels2[] = { "", "Suitable for diabetics", "Suitable for celiacs", "Suitable for vegetarians", "Suitable for vegans"};
 	final String labels3[] = { "", "1 star", "2 stars", "3 stars", "4 stars", "5 stars"};
 	final String labels4[] = { "", "Easy", "Medium", "Hard"};
-	final String labels5[] = { "", "Appetizer", "Breakfast & Brunch", "Chicken", "Main Dish"};
+	private String labels5[] = null;
 	JComboBox comboBox2, comboBox_1, comboBox_2, comboBox_3;
 
 	private AdvancedSearchController controller;
@@ -47,6 +47,8 @@ public class AdvancedSearchView extends JPanel
 		this.setPreferredSize( Toolkit.getDefaultToolkit().getScreenSize());
 		
 		this.controller = controller;
+		this.controller.setView(this);
+		this.controller.setCategories();
 		
 		JLabel lblNewLabel = new JLabel("Advanced searcher");
 		lblNewLabel.setFont(new Font("Arial", Font.BOLD, 30));
@@ -248,6 +250,16 @@ public class AdvancedSearchView extends JPanel
 					.addGap(16))
 		);
 		setLayout(groupLayout);
+	}
+	
+	public String[] getLabels5()
+	{
+		return labels5;
+	}
+
+	public void setLabels5(String[] labels5)
+	{
+		this.labels5 = labels5;
 	}
 	
 	public JTable getTable()

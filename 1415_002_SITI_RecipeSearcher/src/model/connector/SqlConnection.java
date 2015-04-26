@@ -3,7 +3,6 @@ import java.sql.*;
 import java.util.*;
 
 import model.entity.*;
-import model.filtering.*;
 
 public class SqlConnection
 {
@@ -318,7 +317,7 @@ public class SqlConnection
 	 * @param comboCategory
 	 * @return prepared information for construct the query
 	 */
-	public ArrayList<String> buildAdvancedSearchQuery(ArrayList<IngredientFilter> incIngredients, ArrayList<IngredientFilter> remIngredients, String descriptionText, String comboTime, String comboStars, String comboCategory)
+	public ArrayList<String> buildAdvancedSearchQuery(ArrayList<Ingredient> incIngredients, ArrayList<Ingredient> remIngredients, String descriptionText, String comboTime, String comboStars, String comboCategory)
 	{
 		ArrayList<String> rowsPrepared = new ArrayList<String>();
 		String query = "SELECT DISTINCT r.recipeId as recipeId, r.name as name,r.description as description, r.timePrep as TimePrep, r.timeCook as TimeCook, r.timeTotal as TimeTotal, r.category as category, r.rating as rating FROM RECIPE r left join INGREDIENT as i  on r.recipeId=i.recipeId";
@@ -376,24 +375,24 @@ public class SqlConnection
 			for(i=0;i<incIngredients.size();i++)
 			{
 				query = query + " AND (";
-				if(!incIngredients.get(i).getIngredientName().isEmpty())
+				if(!incIngredients.get(i).getName().isEmpty())
 				{
 					query = query + "i.name LIKE ? ";
-					rowsPrepared.add("%"+incIngredients.get(i).getIngredientName()+"%");
-					if(!incIngredients.get(i).getIngredientAmount().isEmpty())
+					rowsPrepared.add("%"+incIngredients.get(i).getName()+"%");
+					if(!incIngredients.get(i).getAmount().isEmpty())
 					{
 						query = query + "AND i.amount LIKE ? ";
-						rowsPrepared.add("%"+incIngredients.get(i).getIngredientAmount()+"%");
+						rowsPrepared.add("%"+incIngredients.get(i).getAmount()+"%");
 					}	
 					/*if(!incIngredients.get(i).getIngredientUnit().isEmpty())
 						query = query + "AND i.unit LIKE '%"+incIngredients.get(i).getIngredientUnit()+"%' ";*/		
 				}
 				else
 				{
-					if(!incIngredients.get(i).getIngredientAmount().isEmpty())
+					if(!incIngredients.get(i).getAmount().isEmpty())
 					{
 						query = query + "i.amount LIKE ? ";
-						rowsPrepared.add("%"+incIngredients.get(i).getIngredientAmount()+"%");
+						rowsPrepared.add("%"+incIngredients.get(i).getAmount()+"%");
 						/*if(!incIngredients.get(i).getIngredientUnit().isEmpty())
 							query = query + "AND i.unit LIKE '%"+incIngredients.get(i).getIngredientUnit()+"%' ";*/
 					}
@@ -407,24 +406,24 @@ public class SqlConnection
 			for(i=0;i<remIngredients.size();i++)
 			{
 				query = query + " AND (";
-				if(!remIngredients.get(i).getIngredientName().isEmpty())
+				if(!remIngredients.get(i).getName().isEmpty())
 				{
 					query = query + "i.name NOT LIKE ? ";
-					rowsPrepared.add("%"+remIngredients.get(i).getIngredientName()+"%");
-					if(!remIngredients.get(i).getIngredientAmount().isEmpty())
+					rowsPrepared.add("%"+remIngredients.get(i).getName()+"%");
+					if(!remIngredients.get(i).getAmount().isEmpty())
 					{
 						query = query + "AND i.amount NOT LIKE ? ";
-						rowsPrepared.add("%"+remIngredients.get(i).getIngredientAmount()+"%");
+						rowsPrepared.add("%"+remIngredients.get(i).getAmount()+"%");
 					}					
 		/*if(!remIngredients.get(i).getIngredientUnit().isEmpty())
 						query = query + "AND i.unit NOT LIKE '%"+remIngredients.get(i).getIngredientUnit()+"%' ";	*/		
 				}
 				else
 				{
-					if(!remIngredients.get(i).getIngredientAmount().isEmpty())
+					if(!remIngredients.get(i).getAmount().isEmpty())
 					{
 						query = query + "i.amount NOT LIKE ? ";
-						rowsPrepared.add("%"+remIngredients.get(i).getIngredientAmount()+"%");
+						rowsPrepared.add("%"+remIngredients.get(i).getAmount()+"%");
 						/*if(!remIngredients.get(i).getIngredientUnit().isEmpty())
 							query = query + "AND i.unit NOT LIKE '%"+remIngredients.get(i).getIngredientUnit()+"%' ";*/
 					}
@@ -558,5 +557,40 @@ public class SqlConnection
 	public String buildRecipeNutritionsQuery(int recipeId)
 	{
 		return "select n.nutritionId, n.name, re.amount, re.percentage from RECIPE r, NUTRITION n, REL_RECIPE_NUTRITION re where r.recipeId = re.recipeId AND n.nutritionId = re.nutritionId AND r.recipeId = "+recipeId;
+	}
+
+	public String getCategories()
+	{
+		String categories = "";
+		Statement stmt = null;
+		ResultSet rs = null;
+		String sql = "SELECT distinct category from recipe";
+		int count = 0;
+		
+		/*get the connection first*/
+		if(connector == null)
+			connectDatabase();
+		
+		try
+		{
+			/*create the statement*/
+			stmt = connector.createStatement();
+			/*execute the query*/
+			rs = stmt.executeQuery(sql);
+			/*get the results*/
+			while (rs.next())
+			{
+				categories = categories + ";"+ rs.getString("category");
+			}
+			/*close connections*/
+			rs.close();
+		    stmt.close();
+		    return categories;
+		} 
+		catch (SQLException e)
+		{
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
 	}
 }

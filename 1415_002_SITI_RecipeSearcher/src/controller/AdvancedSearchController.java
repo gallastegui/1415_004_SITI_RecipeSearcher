@@ -8,8 +8,11 @@ import java.util.Vector;
 import javax.swing.JButton;
 
 import model.connector.SqlConnection;
+import model.entity.Ingredient;
 import model.entity.Recipe;
-import model.filtering.IngredientFilter;
+import model.index.ScoredRecipe;
+import model.index.indexing.LuceneIndexer;
+import model.index.searching.LuceneSearcher;
 import test.SearcherTest;
 import view.AdvancedSearchView;
 import view.BasicSearchView;
@@ -19,9 +22,11 @@ public class AdvancedSearchController implements IController, ActionListener
 	private SearcherTest jframe;
 	private AdvancedSearchView view;
 	private SqlConnection sqlConn;
+	private LuceneIndexer indexer;
+	private LuceneSearcher searcher;
 	
-	private ArrayList<IngredientFilter> incIngredients;
-	private ArrayList<IngredientFilter> remIngredients;
+	private ArrayList<Ingredient> incIngredients;
+	private ArrayList<Ingredient> remIngredients;
 	private String descriptionText;
 	private String comboTime;
 	private String comboStars;
@@ -35,8 +40,8 @@ public class AdvancedSearchController implements IController, ActionListener
 	public AdvancedSearchController()
 	{
 		sqlConn = new SqlConnection(Preferences.pathDatabase);
-		incIngredients = new ArrayList<IngredientFilter>();
-		remIngredients = new ArrayList<IngredientFilter>();
+		incIngredients = new ArrayList<Ingredient>();
+		remIngredients = new ArrayList<Ingredient>();
 	}
 	
     /**
@@ -97,7 +102,7 @@ public class AdvancedSearchController implements IController, ActionListener
     * Getter
     * @returns the list of ingredients that need to appear in the recipe
     */
-	public ArrayList<IngredientFilter> getIncIngredients()
+	public ArrayList<Ingredient> getIncIngredients()
 	{
 		return incIngredients;
 	}
@@ -106,7 +111,7 @@ public class AdvancedSearchController implements IController, ActionListener
     * Setter
     * @params incIngredients the list of ingredients that need to appear in the recipe
     */
-	public void setIncIngredients(ArrayList<IngredientFilter> incIngredients)
+	public void setIncIngredients(ArrayList<Ingredient> incIngredients)
 	{
 		this.incIngredients = incIngredients;
 	}
@@ -115,7 +120,7 @@ public class AdvancedSearchController implements IController, ActionListener
     * Getter
     * @returns the list of ingredients that not have to appear in the recipe
     */
-	public ArrayList<IngredientFilter> getRemIngredients()
+	public ArrayList<Ingredient> getRemIngredients()
 	{
 		return remIngredients;
 	}
@@ -124,7 +129,7 @@ public class AdvancedSearchController implements IController, ActionListener
     * Setter
     * @params remIngredients the list of ingredients that not have to appear in the recipe
     */
-	public void setRemIngredients(ArrayList<IngredientFilter> remIngredients)
+	public void setRemIngredients(ArrayList<Ingredient> remIngredients)
 	{
 		this.remIngredients = remIngredients;
 	}
@@ -152,7 +157,7 @@ public class AdvancedSearchController implements IController, ActionListener
 			/*get the filters of the search */
 			getDatIngredients();
 			/*build the query and execute the results*/
-			recipeResults = sqlConn.executeAdvancedSearch(sqlConn.buildAdvancedSearchQuery( incIngredients, remIngredients, descriptionText, comboTime, comboStars, comboCategory));
+			fillRecipes(Preferences.searchType);
 			/*call the container to show the list results view*/
 			this.jframe.setFlag(7);
 		}
@@ -220,7 +225,7 @@ public class AdvancedSearchController implements IController, ActionListener
 			{
 				amount = "";
 			}
-				incIngredients.add(new IngredientFilter(name, amount));
+				incIngredients.add(new Ingredient(name, amount));
 		}
 
 		numRows = this.view.getModel2().getRowCount();
@@ -228,7 +233,66 @@ public class AdvancedSearchController implements IController, ActionListener
 		{
 			name = (String) ((Vector)this.view.getModel2().getDataVector().elementAt(i)).elementAt(0);
 			amount = (String) ((Vector)this.view.getModel2().getDataVector().elementAt(i)).elementAt(1);
-			remIngredients.add(new IngredientFilter(name, amount));
+			remIngredients.add(new Ingredient(name, amount));
 		}
+	}
+	public void fillRecipes(Preferences.typeOfSearch mode)
+	{
+		String query = "";
+		
+		/* Search the recipes using the database*/
+		if(mode.equals(Preferences.typeOfSearch.SQLITE))
+		{
+			/*get the connection if still not connected*/
+			if(sqlConn == null)
+				sqlConn = new SqlConnection(Preferences.pathDatabase);
+			/*build the query to use in the search and Get the recipe list*/
+			recipeResults = sqlConn.executeAdvancedSearch(sqlConn.buildAdvancedSearchQuery( incIngredients, remIngredients, descriptionText, comboTime, comboStars, comboCategory));
+		}
+		/*Search the recipes using the index*/
+		else if(mode.equals(Preferences.typeOfSearch.LUCENE))
+		{
+			ArrayList<ScoredRecipe> scoredRecipes = new ArrayList<ScoredRecipe>();
+			/*load the index only if it was not already loaded*/
+			if(indexer == null)
+			{
+				indexer = new LuceneIndexer();
+				indexer.load(Preferences.pathIndex);
+			}
+			/*build the searcher*/
+			if(searcher == null)
+			{
+				searcher = new LuceneSearcher();
+				if(searcher.getSearcher() == null)
+				{
+					/*search in the index*/
+					searcher.build(indexer);
+				}
+			}
+			/*we cannot directly display the information recovered by the index, because of the StopWords analyzer,
+			 *  so we take the recipes from the database looking for the ID obtained from the index*/
+			scoredRecipes = (ArrayList<ScoredRecipe>) searcher.AdvancedSearch(incIngredients, remIngredients, descriptionText, comboTime, comboStars, comboCategory);
+			if(!scoredRecipes.isEmpty())
+			{
+				query = query + "SELECT * FROM RECIPE WHERE recipeId = "+ scoredRecipes.get(0).getRecipeAsoc().getRecipeId();
+				for(ScoredRecipe aux : scoredRecipes)
+				{
+					query = query + " OR recipeId = "+aux.getRecipeAsoc().getRecipeId();
+				}
+				recipeResults = sqlConn.executeSearch(query);
+			}
+		}
+	}
+
+	public void setCategories()
+	{
+		String[] results = null;
+		/*get the connection if still not connected*/
+		if(sqlConn == null)
+			sqlConn = new SqlConnection(Preferences.pathDatabase);
+		/*build the query to use in the search*/
+		results = sqlConn.getCategories().split(";");
+		
+		view.setLabels5(results);
 	}
 }

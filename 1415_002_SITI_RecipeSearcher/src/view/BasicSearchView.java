@@ -30,7 +30,7 @@ public class BasicSearchView extends JPanel
 	private JTextField textField;
 	JComboBox comboBox;
 
-	final String labels5[] = { "All", "Appetizer", "Breakfast & Brunch", "Chicken", "Main Dish"};
+	private String labels5[] = null;
 	private BasicSearchController controller;
 	
 	public BasicSearchView(BasicSearchController controller)
@@ -40,7 +40,8 @@ public class BasicSearchView extends JPanel
 		this.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
 		
 		this.controller = controller;
-		
+		this.controller.setView(this);
+		controller.setCategories();
 		JLabel lblNewLabel = new JLabel("Basic searcher");
 		lblNewLabel.setFont(new Font("Arial", Font.BOLD, 30));
 		lblNewLabel.setForeground(new Color(77, 34, 4));
@@ -109,6 +110,16 @@ public class BasicSearchView extends JPanel
 		setLayout(groupLayout);
 	}
 	
+	public String[] getLabels5()
+	{
+		return labels5;
+	}
+
+	public void setLabels5(String[] labels5)
+	{
+		this.labels5 = labels5;
+	}
+
 	public JTextField getTextField()
 	{
 		return textField;

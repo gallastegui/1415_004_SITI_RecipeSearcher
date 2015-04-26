@@ -168,7 +168,7 @@ public class LuceneIndexer implements Index
 	            {
 	            	if(!stopWords.contains(terms[i]))
 	            	{
-	            		line = line + terms[i];
+	            		line = line+ " " + terms[i];
 	            	}
 	            }
 				/*3.4.2 add the name in the document*/
@@ -182,7 +182,7 @@ public class LuceneIndexer implements Index
 	            {
 	            	if(!stopWords.contains(terms[i]))
 	            	{
-	            		line = line + terms[i];
+	            		line = line +" " + terms[i];
 	            	}
 	            }
 	            /*3.5.2 add the description in the document*/
@@ -203,15 +203,14 @@ public class LuceneIndexer implements Index
 				/*3.7.2 for each ingredient, remove the stopwords and then add in the document*/
 				while(rs2.next())
 				{
-					ingredient_aux = ingredient_aux + rs2.getInt("ingredientId") + ";" + rs2.getString("name") + ";" + rs2.getString("amount");
-					ingredient_aux = rs.getString("description");
+					ingredient_aux = ingredient_aux + rs2.getString("name") + ";" + rs2.getString("amount");
 					terms = ingredient_aux.split(" ");
 					ingredient_aux = "";
 		            for(i = 0;i < terms.length;i++)
 		            {
 		            	if(!stopWords.contains(terms[i]))
 		            	{
-		            		ingredient_aux = ingredient_aux + terms[i];
+		            		ingredient_aux = ingredient_aux +" " + terms[i];
 		            	}
 		            }
 					doc.add(new Field("ingredient", ingredient_aux, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
@@ -228,15 +227,14 @@ public class LuceneIndexer implements Index
 				while(rs2.next())
 				{
 					direction_aux = direction_aux + rs2.getInt("directionId") + ";" + rs2.getString("description");
-					/*remove the stopwords from the direction*/
-					direction_aux = rs.getString("description");
+
 					terms = direction_aux.split(" ");
 					direction_aux = "";
 		            for(i = 0;i < terms.length;i++)
 		            {
 		            	if(!stopWords.contains(terms[i]))
 		            	{
-		            		direction_aux = direction_aux + terms[i];
+		            		direction_aux = direction_aux+ " " + terms[i];
 		            	}
 		            }
 					doc.add(new Field("direction", direction_aux, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
@@ -266,15 +264,13 @@ public class LuceneIndexer implements Index
 				while(rs2.next())
 				{
 					review_aux = review_aux + rs2.getInt("reviewId") + ";" + rs2.getString("author") + rs2.getString("description");
-					/*remove the stopwords from the review*/
-					review_aux = rs.getString("description");
 					terms = review_aux.split(" ");
 					review_aux = "";
 		            for(i = 0;i < terms.length;i++)
 		            {
 		            	if(!stopWords.contains(terms[i]))
 		            	{
-		            		review_aux = review_aux + terms[i];
+		            		review_aux = review_aux+ " " + terms[i];
 		            	}
 		            }
 					doc.add(new Field("review", review_aux, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));

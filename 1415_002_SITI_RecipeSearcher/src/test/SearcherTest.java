@@ -3,6 +3,8 @@ package test;
 import javax.swing.JFrame;
 
 import model.entity.Recipe;
+import model.index.indexing.LuceneIndexer;
+import model.index.searching.LuceneSearcher;
 import controller.AdvancedSearchController;
 import controller.BasicSearchController;
 import controller.DefaultController;
@@ -237,6 +239,13 @@ public class SearcherTest
 		
 		program.rpcontroller = new RecipeController();
 		program.rpview = new RecipeView(program.rpcontroller);
+		
+		program.ascontroller.setIndexer(new LuceneIndexer());
+		program.ascontroller.getIndexer().load(Preferences.pathIndex);
+		program.bscontroller.setIndexer(program.ascontroller.getIndexer());
+		program.ascontroller.setSearcher(new LuceneSearcher());
+		program.ascontroller.getSearcher().build(program.ascontroller.getIndexer());
+		program.bscontroller.setSearcher(program.ascontroller.getSearcher());
 		
 		program.bscontroller.setJframe(program);
 		program.dfcontroller.setJframe(program);

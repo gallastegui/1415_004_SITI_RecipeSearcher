@@ -23,8 +23,11 @@ public class AdvancedSearchController implements IController, ActionListener
 	private AdvancedSearchView view;
 	private SqlConnection sqlConn;
 	private LuceneIndexer indexer;
+
+
 	private LuceneSearcher searcher;
-	
+
+
 	private ArrayList<Ingredient> incIngredients;
 	private ArrayList<Ingredient> remIngredients;
 	private String descriptionText;
@@ -294,5 +297,26 @@ public class AdvancedSearchController implements IController, ActionListener
 		results = sqlConn.getCategories().split(";");
 		
 		view.setLabels5(results);
+	}
+
+	public LuceneIndexer getIndexer()
+	{
+
+		return this.indexer;
+	}
+	
+	public void setIndexer(LuceneIndexer indexer)
+	{
+		this.indexer = indexer;
+	}
+	
+	public LuceneSearcher getSearcher()
+	{
+		return searcher;
+	}
+
+	public void setSearcher(LuceneSearcher searcher)
+	{
+		this.searcher = searcher;
 	}
 }

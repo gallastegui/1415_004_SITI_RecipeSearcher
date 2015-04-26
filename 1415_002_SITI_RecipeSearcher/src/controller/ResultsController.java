@@ -124,6 +124,9 @@ public class ResultsController implements IController,ActionListener
 	 */
 	public void insertResultsTable()
 	{
+		if(recipeResults == null)
+			recipeResults = new ArrayList<Recipe>();
+		
 		/*for each recipe, adds in a row*/
 		for(Recipe r : recipeResults)
 		{

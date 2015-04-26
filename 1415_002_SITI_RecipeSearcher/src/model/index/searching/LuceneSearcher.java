@@ -27,6 +27,11 @@ public class LuceneSearcher implements Searcher
 {
 	private IndexSearcher searcher;
 
+	public void setSearcher(IndexSearcher searcher)
+	{
+		this.searcher = searcher;
+	}
+
 	public IndexSearcher getSearcher()
 	{
 		return searcher;
@@ -72,7 +77,7 @@ public class LuceneSearcher implements Searcher
 	public List<ScoredRecipe> AdvancedSearch(ArrayList<Ingredient> incIngredients,ArrayList<Ingredient> remIngredients,String descriptionText,String comboTime,String comboStars,String comboCategory)
 	{
 		BooleanQuery booleanQuery = new BooleanQuery();
-	    String[] fields = {"name","description","review"};
+	    String[] fields = {"name","description"};
 	    Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_31);
 		MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_31, fields, analyzer);
 		ArrayList<Query> queryIncIngredient = new ArrayList<Query>();
@@ -131,7 +136,7 @@ public class LuceneSearcher implements Searcher
 			
 			if(!descriptionText.isEmpty())
 			{
-				queryDescription = parser.parse(descriptionText);
+				queryDescription = new TermQuery(new Term("name", descriptionText));
 			}
 			else
 			{
@@ -208,6 +213,11 @@ public class LuceneSearcher implements Searcher
 				queryCategory = null;
 			}
 			
+			if(queryDescription != null)
+			{
+				booleanQuery.add(queryDescription, BooleanClause.Occur.SHOULD);
+			}
+			
 			for(Query incIng : queryIncIngredient)
 			{
 				booleanQuery.add(incIng, BooleanClause.Occur.MUST);
@@ -218,22 +228,21 @@ public class LuceneSearcher implements Searcher
 				booleanQuery.add(remIng, BooleanClause.Occur.MUST_NOT);
 			}
 			
-			if(queryDescription != null)
-			{
-				booleanQuery.add(queryDescription, BooleanClause.Occur.MUST);
-			}
-			
 			if(queryTime1 != null)
 			{
 				booleanQuery.add(queryTime1, BooleanClause.Occur.MUST);
 				booleanQuery.add(queryTime2, BooleanClause.Occur.MUST_NOT);
 			}
-			else
+			
+			else if(queryTime2 != null)
 			{
+				
 				booleanQuery.add(queryTime2, BooleanClause.Occur.MUST);
 			}
+			
 			if(queryStars != null)
 				booleanQuery.add(queryStars, BooleanClause.Occur.MUST);
+			
 			if(queryCategory != null)
 				booleanQuery.add(queryCategory, BooleanClause.Occur.MUST);
 			

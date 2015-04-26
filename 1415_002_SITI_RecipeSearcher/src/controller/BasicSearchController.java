@@ -22,6 +22,8 @@ public class BasicSearchController implements IController, ActionListener
 	private String sql;
 	private SqlConnection sqlConn;
 	private LuceneIndexer indexer;
+
+
 	private LuceneSearcher searcher;
 	private BasicSearchView view;
 	String comboboxText;
@@ -190,5 +192,26 @@ public class BasicSearchController implements IController, ActionListener
 		results = sqlConn.getCategories().split(";");
 		
 		view.setLabels5(results);
+	}
+	
+	public LuceneIndexer getIndexer()
+	{
+
+		return this.indexer;
+	}
+	
+	public void setIndexer(LuceneIndexer indexer)
+	{
+		this.indexer = indexer;
+	}
+	
+	public LuceneSearcher getSearcher()
+	{
+		return searcher;
+	}
+
+	public void setSearcher(LuceneSearcher searcher)
+	{
+		this.searcher = searcher;
 	}
 }

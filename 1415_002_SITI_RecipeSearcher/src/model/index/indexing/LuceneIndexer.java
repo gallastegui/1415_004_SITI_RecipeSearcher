@@ -29,6 +29,7 @@ import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.MMapDirectory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
@@ -300,7 +301,8 @@ public class LuceneIndexer implements Index
 		/*try to get the index in the memory ram*/
         try
         {
-            reader = IndexReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath))));
+        	MMapDirectory mapDirectory=new MMapDirectory(new File(indexPath));
+            reader = IndexReader.open(mapDirectory);
         } catch (Exception ex)
         {
             Logger.getLogger(LuceneIndexer.class.getName()).log(Level.SEVERE, null, ex);

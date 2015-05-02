@@ -45,6 +45,7 @@ public class AdvancedSearchController implements IController, ActionListener
 		sqlConn = new SqlConnection(Preferences.pathDatabase);
 		incIngredients = new ArrayList<Ingredient>();
 		remIngredients = new ArrayList<Ingredient>();
+		recipeResults = new ArrayList<Recipe>();
 	}
 	
     /**
@@ -277,11 +278,18 @@ public class AdvancedSearchController implements IController, ActionListener
 			scoredRecipes = (ArrayList<ScoredRecipe>) searcher.AdvancedSearch(incIngredients, remIngredients, descriptionText, comboTime, comboStars, comboCategory);
 			if(!scoredRecipes.isEmpty())
 			{
-				query = query + "SELECT * FROM RECIPE WHERE recipeId = "+ scoredRecipes.get(0).getRecipeAsoc().getRecipeId();
-				for(ScoredRecipe aux : scoredRecipes)
+				query = query + "SELECT * FROM RECIPE WHERE ";
+				query += " recipeId IN (";
+				for(int i = 0; i < scoredRecipes.size(); i++)
 				{
-					query = query + " OR recipeId = "+aux.getRecipeAsoc().getRecipeId();
+					query = query + scoredRecipes.get(i).getRecipeAsoc().getRecipeId();
+				        if(i < scoredRecipes.size() - 1)
+				        {
+				        	query = query + ","; //Add an "," after each selection (except the last)
+				        }
 				}
+				query = query + ")";
+				System.out.println("\n"+query);
 				recipeResults = sqlConn.executeSearch(query);
 			}
 		}

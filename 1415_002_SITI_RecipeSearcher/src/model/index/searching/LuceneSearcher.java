@@ -76,15 +76,17 @@ public class LuceneSearcher implements Searcher
 	
 	public List<ScoredRecipe> AdvancedSearch(ArrayList<Ingredient> incIngredients,ArrayList<Ingredient> remIngredients,String descriptionText,String comboTime,String comboStars,String comboCategory)
 	{
-		BooleanQuery booleanQuery = new BooleanQuery();
-	    String[] fields = {"name","description"};
+		BooleanQuery booleanQuery = new BooleanQuery(), aux = new BooleanQuery(), booleanTime = new BooleanQuery(), booleanTime2 = new BooleanQuery();
+	    String[] fields = {"name","description"}, _1to30 = {"1 min","2 mins","3 mins","4 mins","5 mins","6 mins","7 mins","8 mins","9 mins","10 mins","11 mins","12 mins","13 mins","14 mins","15 mins","16 mins","17 mins","18 mins","19 mins","20 mins","21 mins","22 mins","23 mins","24 mins","25 mins","26 mins","27 mins","28 mins","29 mins"},
+	    		_31to59 = {"30 mins","31 mins","32 mins","33 mins","34 mins","35 mins","36 mins","37 mins","38 mins","39 mins","40 mins","41 mins","42 mins","43 mins","44 mins","45 mins","46 mins","47 mins","48 mins","49 mins","50 mins","51 mins","52 mins","53 mins","54 mins","55 mins","56 mins","57 mins","58 mins","59 mins"};
 	    Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_31);
-		MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_31, fields, analyzer);
+	    QueryParser queryParserName = new QueryParser(Version.LUCENE_31, "name", new StandardAnalyzer(Version.LUCENE_31)),queryParserDes= new QueryParser(Version.LUCENE_31, "description", new StandardAnalyzer(Version.LUCENE_31)), queryParserIng = new QueryParser(Version.LUCENE_31, "ingredient", new StandardAnalyzer(Version.LUCENE_31));;
 		ArrayList<Query> queryIncIngredient = new ArrayList<Query>();
 		ArrayList<Query> queryRemIngredient = new ArrayList<Query>();
-		Query queryTime1 = null,queryTime2 = null;
+		ArrayList<Query> queryTime1 = new ArrayList<Query>(), queryTime2 = new ArrayList<Query>();
 		Query queryStars = null;
 		Query queryCategory = null;
+		Query queryName = null;
 		Query queryDescription = null;
 		List<ScoredRecipe> sct = null;
 		
@@ -96,18 +98,18 @@ public class LuceneSearcher implements Searcher
 				{
 					if(!ing.getAmount().isEmpty())
 					{
-						queryIncIngredient.add(new TermQuery(new Term("ingredient", ing.getName()+";"+ing.getAmount())));
+						queryIncIngredient.add(queryParserIng.parse(ing.getName()+";"+ing.getAmount()));
 					}
 					else
 					{
-						queryIncIngredient.add(new TermQuery(new Term("ingredient", ing.getName())));
+						queryIncIngredient.add(queryParserIng.parse(ing.getName()));
 					}
 				}
 				else
 				{
 					if(!ing.getAmount().isEmpty())
 					{
-						queryIncIngredient.add(new TermQuery(new Term("ingredient", ing.getAmount())));
+						queryIncIngredient.add(queryParserIng.parse(ing.getAmount()));
 					}
 				}
 			}
@@ -118,25 +120,26 @@ public class LuceneSearcher implements Searcher
 				{
 					if(!ing.getAmount().isEmpty())
 					{
-						queryRemIngredient.add(new TermQuery(new Term("ingredient", ing.getName()+";"+ing.getAmount())));
+						queryRemIngredient.add(queryParserIng.parse(ing.getName()+";"+ing.getAmount()));
 					}
 					else
 					{
-						queryRemIngredient.add(new TermQuery(new Term("ingredient", ing.getName())));
+						queryRemIngredient.add(queryParserIng.parse(ing.getName()));
 					}
 				}
 				else
 				{
 					if(!ing.getAmount().isEmpty())
 					{
-						queryRemIngredient.add(new TermQuery(new Term("ingredient", ing.getAmount())));
+						queryRemIngredient.add(queryParserIng.parse(ing.getAmount()));
 					}
 				}
 			}
 			
 			if(!descriptionText.isEmpty())
 			{
-				queryDescription = new TermQuery(new Term("name", descriptionText));
+				queryName = queryParserName.parse(descriptionText);
+				queryDescription = queryParserDes.parse(descriptionText);
 			}
 			else
 			{
@@ -145,24 +148,37 @@ public class LuceneSearcher implements Searcher
 			
 			if(!comboTime.isEmpty())
 			{
-				if(comboTime.equals("less than 30 minutes"))
+				if(comboTime.equals("less than 30 mins"))
 				{
-					queryTime1 = NumericRangeQuery.newIntRange("TimeTotal",
-	                        new Integer(1), new Integer(30),
-	                        true, true);
-					queryTime2 = new TermQuery(new Term("TimeTotal","hr"));
+					for(String timeAux : _1to30)
+					{
+						queryTime1.add(new TermQuery(new Term("timeTotal", timeAux)));
+					}
+
+					queryTime2.add(new TermQuery(new Term("timeTotal", "hr")));
+					queryTime2.add(new TermQuery(new Term("timeTotal", "hrs")));
+					queryTime2.add(new TermQuery(new Term("timeTotal", "day")));
+					queryTime2.add(new TermQuery(new Term("timeTotal", "days")));
 				}
-				else if(comboTime.equals("between 30 and 60 minutes"))
+				else if(comboTime.equals("between 30-60 mins"))
 				{
-					queryTime1 = NumericRangeQuery.newIntRange("TimeTotal",
-	                        new Integer(31), new Integer(59),
-	                        true, true);
-					queryTime2 = new TermQuery(new Term("TimeTotal","hr"));
+					for(String timeAux : _31to59)
+					{
+						queryTime1.add(new TermQuery(new Term("timeTotal", timeAux)));
+					}
+
+					queryTime2.add(new TermQuery(new Term("timeTotal", "hr")));
+					queryTime2.add(new TermQuery(new Term("timeTotal", "hrs")));
+					queryTime2.add(new TermQuery(new Term("timeTotal", "day")));
+					queryTime2.add(new TermQuery(new Term("timeTotal", "days")));
 				}
-				else if(comboTime.equals("more than 60 minutes"))
+				else if(comboTime.equals("more than 60 mins"))
 				{
 					queryTime1 = null;
-					queryTime2 = new TermQuery(new Term("TimeTotal","hr"));
+					queryTime2.add(new TermQuery(new Term("timeTotal", "hr")));
+					queryTime2.add(new TermQuery(new Term("timeTotal", "hrs")));
+					queryTime2.add(new TermQuery(new Term("timeTotal", "day")));
+					queryTime2.add(new TermQuery(new Term("timeTotal", "days")));
 				}
 			}
 			
@@ -215,7 +231,9 @@ public class LuceneSearcher implements Searcher
 			
 			if(queryDescription != null)
 			{
-				booleanQuery.add(queryDescription, BooleanClause.Occur.SHOULD);
+				aux.add(queryName,BooleanClause.Occur.SHOULD);
+				aux.add(queryDescription, BooleanClause.Occur.SHOULD);
+				booleanQuery.add(aux, BooleanClause.Occur.MUST);
 			}
 			
 			for(Query incIng : queryIncIngredient)
@@ -230,14 +248,27 @@ public class LuceneSearcher implements Searcher
 			
 			if(queryTime1 != null)
 			{
-				booleanQuery.add(queryTime1, BooleanClause.Occur.MUST);
-				booleanQuery.add(queryTime2, BooleanClause.Occur.MUST_NOT);
+				if(!queryTime1.isEmpty())
+				{
+					for(Query timeAux : queryTime1)
+					{
+						booleanTime.add(timeAux,BooleanClause.Occur.SHOULD);
+					}
+					booleanQuery.add(booleanTime, BooleanClause.Occur.MUST);
+					for(Query timeAux: queryTime2)
+					{
+						booleanTime2.add(timeAux,BooleanClause.Occur.SHOULD);
+					}
+					booleanQuery.add(booleanTime2, BooleanClause.Occur.MUST_NOT);
+				}
 			}
-			
 			else if(queryTime2 != null)
 			{
-				
-				booleanQuery.add(queryTime2, BooleanClause.Occur.MUST);
+				for(Query timeAux: queryTime2)
+				{
+					booleanTime2.add(timeAux,BooleanClause.Occur.SHOULD);
+				}
+				booleanQuery.add(booleanTime2, BooleanClause.Occur.MUST);
 			}
 			
 			if(queryStars != null)
@@ -302,7 +333,7 @@ public class LuceneSearcher implements Searcher
         });
  
         Collections.sort(sct);
- 
+ // olive oil;3 tablespoons
         return sct;
     }
 }

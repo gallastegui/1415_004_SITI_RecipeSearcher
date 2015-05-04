@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
@@ -13,6 +14,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryParser.complexPhrase.ComplexPhraseQueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.util.Version;
 
@@ -77,19 +79,19 @@ public class LuceneSearcher implements Searcher
 	public List<ScoredRecipe> AdvancedSearch(ArrayList<Ingredient> incIngredients,ArrayList<Ingredient> remIngredients,String descriptionText,String comboTime,String comboStars,String comboCategory)
 	{
 		BooleanQuery booleanQuery = new BooleanQuery(), aux = new BooleanQuery(), booleanTime = new BooleanQuery(), booleanTime2 = new BooleanQuery();
-	    String[] fields = {"name","description"}, _1to30 = {"1 min","2 mins","3 mins","4 mins","5 mins","6 mins","7 mins","8 mins","9 mins","10 mins","11 mins","12 mins","13 mins","14 mins","15 mins","16 mins","17 mins","18 mins","19 mins","20 mins","21 mins","22 mins","23 mins","24 mins","25 mins","26 mins","27 mins","28 mins","29 mins"},
+	    String[] _1to30 = {"1 min","2 mins","3 mins","4 mins","5 mins","6 mins","7 mins","8 mins","9 mins","10 mins","11 mins","12 mins","13 mins","14 mins","15 mins","16 mins","17 mins","18 mins","19 mins","20 mins","21 mins","22 mins","23 mins","24 mins","25 mins","26 mins","27 mins","28 mins","29 mins"},
 	    		_31to59 = {"30 mins","31 mins","32 mins","33 mins","34 mins","35 mins","36 mins","37 mins","38 mins","39 mins","40 mins","41 mins","42 mins","43 mins","44 mins","45 mins","46 mins","47 mins","48 mins","49 mins","50 mins","51 mins","52 mins","53 mins","54 mins","55 mins","56 mins","57 mins","58 mins","59 mins"};
-	    Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_31);
-	    QueryParser queryParserName = new QueryParser(Version.LUCENE_31, "name", new StandardAnalyzer(Version.LUCENE_31)),queryParserDes= new QueryParser(Version.LUCENE_31, "description", new StandardAnalyzer(Version.LUCENE_31)), queryParserIng = new QueryParser(Version.LUCENE_31, "ingredient", new StandardAnalyzer(Version.LUCENE_31));;
+	    QueryParser queryParserDes= new QueryParser(Version.LUCENE_31, "description", new StandardAnalyzer(Version.LUCENE_31)), queryParserIng = new QueryParser(Version.LUCENE_31, "ingredient", new StandardAnalyzer(Version.LUCENE_31));;
 		ArrayList<Query> queryIncIngredient = new ArrayList<Query>();
 		ArrayList<Query> queryRemIngredient = new ArrayList<Query>();
-		ArrayList<Query> queryTime1 = new ArrayList<Query>(), queryTime2 = new ArrayList<Query>();
+		ArrayList<PhraseQuery> queryTime1 = new ArrayList<PhraseQuery>(), phrIngredient = new ArrayList<PhraseQuery>();
+		ArrayList<Query> queryTime2 = new ArrayList<Query>();
+		PhraseQuery q2 = new PhraseQuery();
 		Query queryStars = null;
 		Query queryCategory = null;
-		Query queryName = null;
 		Query queryDescription = null;
 		List<ScoredRecipe> sct = null;
-		
+		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_31);
 		try
 		{
 			for(Ingredient ing : incIngredients)
@@ -138,7 +140,8 @@ public class LuceneSearcher implements Searcher
 			
 			if(!descriptionText.isEmpty())
 			{
-				queryName = queryParserName.parse(descriptionText);
+				for(String str : descriptionText.split(" "))
+					q2.add(new Term("name", str.toLowerCase()));
 				queryDescription = queryParserDes.parse(descriptionText);
 			}
 			else
@@ -152,7 +155,12 @@ public class LuceneSearcher implements Searcher
 				{
 					for(String timeAux : _1to30)
 					{
-						queryTime1.add(new TermQuery(new Term("timeTotal", timeAux)));
+						PhraseQuery p_aux = new PhraseQuery();
+						for(String str: timeAux.split(" "))
+						{
+							p_aux.add(new Term("timeTotal", str));
+						}
+							queryTime1.add(p_aux);
 					}
 
 					queryTime2.add(new TermQuery(new Term("timeTotal", "hr")));
@@ -164,7 +172,12 @@ public class LuceneSearcher implements Searcher
 				{
 					for(String timeAux : _31to59)
 					{
-						queryTime1.add(new TermQuery(new Term("timeTotal", timeAux)));
+						PhraseQuery p_aux = new PhraseQuery();
+						for(String str: timeAux.split(" "))
+						{
+							p_aux.add(new Term("timeTotal", str));
+						}
+							queryTime1.add(p_aux);
 					}
 
 					queryTime2.add(new TermQuery(new Term("timeTotal", "hr")));
@@ -231,11 +244,18 @@ public class LuceneSearcher implements Searcher
 			
 			if(queryDescription != null)
 			{
-				aux.add(queryName,BooleanClause.Occur.SHOULD);
+				aux.add(q2,BooleanClause.Occur.SHOULD);
 				aux.add(queryDescription, BooleanClause.Occur.SHOULD);
 				booleanQuery.add(aux, BooleanClause.Occur.MUST);
 			}
 			
+
+//			QueryParser parser = new QueryParser(Version.LUCENE_31, "<default field>", analyzer);
+//	       String aux2 = "+ingredient:\"olive o*\"";
+//			Term term = new Term("ingredient",incIngredients.get(0).getName().replace(" ", "\\ ")+"*");
+//			Query wild = new WildcardQuery(term);
+//			System.out.println(parser.parse(aux2));
+//			booleanQuery.add(parser.parse("test phrase*"), BooleanClause.Occur.MUST);
 			for(Query incIng : queryIncIngredient)
 			{
 				booleanQuery.add(incIng, BooleanClause.Occur.MUST);
